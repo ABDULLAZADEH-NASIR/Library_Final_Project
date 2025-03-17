@@ -1,6 +1,7 @@
 package az.texnoera.library_management_system.repo;
 
 import az.texnoera.library_management_system.entity.Book;
+import az.texnoera.library_management_system.model.enums.BookCategory;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,9 @@ public interface BookRepo extends JpaRepository<Book, Long> {
     Optional<Book> findBookById(Long id);
 
     @Query("SELECT DISTINCT b FROM Book b LEFT JOIN  FETCH b.authors where b.name=:name")
-    Optional<Book> findBookByName( String name);
+    Optional<Book> findBookByName(String name);
+
+    @Query("SELECT  DISTINCT  b FROM Book b LEFT JOIN FETCH b.authors where b.category=:category")
+    Page<Book> findABookByCategory(BookCategory category, Pageable pageable);
 
 }

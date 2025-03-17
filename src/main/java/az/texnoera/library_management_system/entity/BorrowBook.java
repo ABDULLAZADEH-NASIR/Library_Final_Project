@@ -26,14 +26,16 @@ public class BorrowBook {
     @JoinColumn
     private User user;
 
+    private Long borrowFine;
+
     @NotNull
     private LocalDate borrowDate;
     @NotNull
     private LocalDate returnDate;
 
-    private boolean isReturned;
+    private boolean isReturned = false;
 
-    // Avtomatik olaraq returnDate təyin edilir
+    // Avtomatik olaraq returnDate təyin edilir(yeni yarandigi tarixe esasen)
     @PrePersist
     public void setReturnDateAutomatically() {
         if (this.borrowDate == null) {
@@ -42,5 +44,4 @@ public class BorrowBook {
         // 7 gün sonrakı tarixi təyin edir
         this.returnDate = this.borrowDate.plusDays(7);
     }
-
 }

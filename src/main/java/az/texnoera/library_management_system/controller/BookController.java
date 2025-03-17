@@ -27,7 +27,7 @@ public class BookController {
         return bookServiceImpl.getBookById(id);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/search-bookName")
     public BookResponse getBookByName(@RequestParam String bookName) {
         return bookServiceImpl.getBookByBookName(bookName);
 
@@ -48,6 +48,13 @@ public class BookController {
                                    @RequestBody BookRequestForBookUpdate bookRequest) {
         return bookServiceImpl.updateBookById(id,bookRequest);
 
+    }
+
+    @GetMapping("/search-bookCategory")
+    public Result<BookResponse> getBooksByBookCategory(@RequestParam String category,
+                                                       @RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "10") int size) {
+        return bookServiceImpl.getBooksByBookCategory(category,page,size);
     }
 
 

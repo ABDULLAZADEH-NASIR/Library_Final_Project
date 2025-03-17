@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.entity.Book;
+import az.texnoera.library_management_system.model.enums.BookCategory;
 import az.texnoera.library_management_system.model.mapper.BookMapper;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
@@ -74,5 +75,15 @@ public class BookServiceImpl implements BookService {
         book.setPages(bookRequest.getPages());
         bookRepo.save(book);
         return BookMapper.BookToBookResponse(book);
+    }
+
+    @Override
+    public Result<BookResponse> getBooksByBookCategory(String category, int page, int size) {
+        Pageable page3 = PageRequest.of(page, size);
+        Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(category),page3);
+
+        List<BookResponse> bookResponses = books.stream()
+                .map(BookMapper::BookToBookResponse).toList();
+        return new Result<>(bookResponses, page, size, books.getTotalPages());
     }
 }

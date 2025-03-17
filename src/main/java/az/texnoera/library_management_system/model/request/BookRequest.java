@@ -18,5 +18,6 @@ public class BookRequest {
     private int year;
     private int pages;
     private String category;
-    private Long count;
+    private Long totalBookCount;
+    private Long availableBookCount;
 }

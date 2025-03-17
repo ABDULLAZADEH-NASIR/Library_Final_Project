@@ -1,5 +1,7 @@
 package az.texnoera.library_management_system.entity;
 
+import az.texnoera.library_management_system.model.enums.BookCategory;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -26,9 +28,12 @@ public class Book {
     @NotNull
     private int pages;
     @NotNull
-    private Long count;
+    private Long totalBooksCount;
     @NotNull
-    private String category;
+    private Long avialableBooksCount;
+    @Nullable
+    @Enumerated(EnumType.STRING)
+    private BookCategory category;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable

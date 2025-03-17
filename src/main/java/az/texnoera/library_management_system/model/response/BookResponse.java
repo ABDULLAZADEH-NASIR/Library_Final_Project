@@ -19,5 +19,6 @@ public class BookResponse {
     private Set<AuthorResponse>authors;
     private int year;
     private int pages;
-    private Long count;
+    private Long totalBookCount;
+    private Long availableBookCount;
 }

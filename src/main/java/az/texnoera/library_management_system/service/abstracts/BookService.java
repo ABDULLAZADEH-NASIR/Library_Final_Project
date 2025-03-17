@@ -23,4 +23,6 @@ public interface BookService {
     void deleteBookById(Long id);
 
     BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest);
+
+    Result<BookResponse> getBooksByBookCategory(String category, int page, int size);
 }
