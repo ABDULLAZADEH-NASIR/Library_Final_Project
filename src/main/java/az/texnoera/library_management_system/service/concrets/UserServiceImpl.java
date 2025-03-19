@@ -3,16 +3,21 @@ package az.texnoera.library_management_system.service.concrets;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
+import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
+import az.texnoera.library_management_system.model.response.UserResponse;
+import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
 import az.texnoera.library_management_system.repo.UserRepo;
 import az.texnoera.library_management_system.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,8 +55,7 @@ public class UserServiceImpl implements UserService {
             // hansiki muveqqeti yaddasa vermisdim
             tempUser = null;
             return "User successfully registered!";
-        }
-        else {
+        } else {
             return "Invalid OTP. Please try again.";
         }
     }
@@ -69,5 +73,43 @@ public class UserServiceImpl implements UserService {
         message.setText("Your OTP code is: " + otp + ". It will expire in "
                 + OTP_VALID_MINUTES + " minutes.");
         mailSender.send(message);
+    }
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        User user = userRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("User not found"));
+        return UserMapper.userForUserResponse(user);
+    }
+
+    @Override
+    public UserResponseWithBorrow getUserBorrowedById(Long id) {
+        User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
+                new RuntimeException("User not found"));
+        return UserMapper.userForUserResponseWithBorrow(user);
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> users = userRepo.findAllUsers(pageable);
+        return users.stream().map(UserMapper::userForUserResponse).toList();
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        User user = userRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("User not found"));
+        userRepo.delete(user);
+    }
+
+    @Transactional
+    @Override
+    public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
+        User user = userRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("User not found"));
+        UserMapper.userUpdateRequestForUser(user, userRequest);
+        return UserMapper.userForUserResponse(userRepo.save(user));
+
     }
 }

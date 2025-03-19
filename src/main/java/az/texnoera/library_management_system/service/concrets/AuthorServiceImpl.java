@@ -73,8 +73,8 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponse(author);
     }
 
-    @Override
     @Transactional
+    @Override
     public AuthorResponse addBookToAuthor(Long authorId, Long bookId) {
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() ->
                 new RuntimeException("Author not found"));

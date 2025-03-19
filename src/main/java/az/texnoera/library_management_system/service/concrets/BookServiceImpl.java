@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,15 +67,13 @@ public class BookServiceImpl implements BookService {
         bookRepo.delete(book);
     }
 
+    @Transactional
     @Override
     public BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
                 new RuntimeException("Book not found"));
-        book.setName(bookRequest.getName());
-        book.setYear(bookRequest.getYear());
-        book.setPages(bookRequest.getPages());
-        bookRepo.save(book);
-        return BookMapper.BookToBookResponse(book);
+       BookMapper.bookUpdateToBook(book, bookRequest);
+        return BookMapper.BookToBookResponse(bookRepo.save(book));
     }
 
     @Override
