@@ -28,6 +28,7 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
     private final BookRepo bookRepo;
 
+    @Transactional
     @Override
     public BookResponse createBook(BookRequest bookRequest) {
         Book book = BookMapper.BookRequestToBook(bookRequest);

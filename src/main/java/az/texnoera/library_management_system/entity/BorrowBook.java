@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +32,7 @@ public class BorrowBook {
     private BigDecimal fineAmountAZN=BigDecimal.ZERO;
 
     @NotNull
+    @CreationTimestamp
     private LocalDate borrowDate;
     @NotNull
     private LocalDate returnDate;
@@ -39,11 +42,9 @@ public class BorrowBook {
     // Avtomatik olaraq returnDate təyin edilir(yeni yarandigi tarixe esasen)
     @PrePersist
     public void setReturnDateAutomatically() {
-        if (this.borrowDate == null) {
-            this.borrowDate = LocalDate.now();
+        if (this.returnDate == null) {
+            this.returnDate = this.borrowDate.plusDays(10);
         }
-        // 7 gün sonrakı tarixi təyin edir
-        this.returnDate = this.borrowDate.plusDays(7);
     }
 
     public void calculateFine() {
