@@ -64,7 +64,7 @@ public interface BookMapper {
         Book.builder()
                 .name(bookRequest.getName())
                 .year(bookRequest.getYear())
-                .totalBooksCount(bookRequest.getTotalBookCount())
+                .totalBooksCount(bookRequest.getTotalBooksCount())
                 .build();
     }
 }

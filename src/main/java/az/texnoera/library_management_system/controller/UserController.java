@@ -27,12 +27,12 @@ public class UserController {
         return userService.verifyOtp(otp);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/search-by-id/{id}")
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/search-with-borrow/{id}")
     public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
         return  userService.getUserBorrowedById(id);
     }

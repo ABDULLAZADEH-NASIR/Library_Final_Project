@@ -32,4 +32,11 @@ public interface AuthorMapper {
                                 .build()).collect(Collectors.toSet()))
                 .build();
     }
+
+    static void authorToAuthorResponseUpdate(Author author, AuthorRequest authorRequest) {
+        Author.builder()
+                .name(authorRequest.getName())
+                .surname(authorRequest.getSurname())
+                .build();
+    }
 }

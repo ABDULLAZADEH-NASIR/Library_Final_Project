@@ -16,5 +16,7 @@ public class BookRequestForBookUpdate {
     private String name;
     private int year;
     private int pages;
+    private Long totalBooksCount;
+
 
 }

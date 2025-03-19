@@ -67,10 +67,8 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorResponse updateAuthorById(Long id, AuthorRequest authorRequest) {
         Author author = authorRepo.findById(id).orElseThrow(() ->
                 new RuntimeException("Author not found"));
-        author.setName(authorRequest.getName());
-        author.setSurname(authorRequest.getSurname());
-        authorRepo.save(author);
-        return AuthorMapper.authorToAuthorResponse(author);
+        AuthorMapper.authorToAuthorResponseUpdate(author, authorRequest);
+        return AuthorMapper.authorToAuthorResponse(authorRepo.save(author));
     }
 
     @Transactional
