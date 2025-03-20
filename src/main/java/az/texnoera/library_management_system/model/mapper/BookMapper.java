@@ -61,10 +61,9 @@ public interface BookMapper {
     }
 
     static void bookUpdateToBook(Book book, BookRequestForBookUpdate bookRequest) {
-        Book.builder()
-                .name(bookRequest.getName())
-                .year(bookRequest.getYear())
-                .totalBooksCount(bookRequest.getTotalBooksCount())
-                .build();
+        book.setName(bookRequest.getName());
+        book.setYear(bookRequest.getYear());
+        book.setPages(bookRequest.getPages());
+        book.setTotalBooksCount(bookRequest.getTotalBooksCount());
     }
 }

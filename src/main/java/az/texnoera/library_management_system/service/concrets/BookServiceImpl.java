@@ -79,8 +79,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Result<BookResponse> getBooksByBookCategory(String category, int page, int size) {
+        String categoryFilter = category.toUpperCase();
         Pageable page3 = PageRequest.of(page, size);
-        Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(category),page3);
+        Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(categoryFilter),page3);
 
         List<BookResponse> bookResponses = books.stream()
                 .map(BookMapper::BookToBookResponse).toList();

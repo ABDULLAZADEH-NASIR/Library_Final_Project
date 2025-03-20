@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Table(name = "borrow_book")
 public class BorrowBook {
     @Id
@@ -29,7 +31,7 @@ public class BorrowBook {
     @JoinColumn
     private User user;
 
-    private BigDecimal fineAmountAZN=BigDecimal.ZERO;
+    private BigDecimal fineAmountAZN = BigDecimal.ZERO;
 
     @NotNull
     @CreationTimestamp
