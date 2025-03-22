@@ -1,5 +1,6 @@
 package az.texnoera.library_management_system.service.concrets;
 
+import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
@@ -14,9 +15,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -111,5 +114,49 @@ public class UserServiceImpl implements UserService {
         UserMapper.userUpdateRequestForUser(user, userRequest);
         return UserMapper.userForUserResponse(userRepo.save(user));
 
+    }
+
+    @Scheduled(cron = "0 0 9 * * ?")  // Hər gün saat 9:00-da işləyəcək
+    public void sendScheduledDebtNotifications() {
+        sendDailyDebtNotifications();  // Borcu olan istifadəçilərə e-mail göndərmək
+    }
+
+    public void sendMailDebtMessage(User user) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Library Debt Notification");
+
+        StringBuilder fineDetails = new StringBuilder("Dear " + user.getName() + " " + user.getSurname() + ",\n\n" +
+                "The following books have been overdue, and fines have been calculated:\n");
+
+        BigDecimal totalDebt = user.calculateTotalDebt();  // Ümumi borcu hesablayir
+
+        for (BorrowBook borrowBook : user.getBorrowedBooks()) {
+            borrowBook.calculateFine();  // Hər kitabın cərməsini hesabla
+
+            if (borrowBook.getFineAmountAZN().compareTo(BigDecimal.ZERO) > 0) {  // Gecikmiş kitablar üçün kitab adi
+                // ve hemin kitab uzre borcu gosterir
+                fineDetails.append("- ").append(borrowBook.getBook().getName())
+                        .append(": ").append(borrowBook.getFineAmountAZN()).append(" AZN\n");
+            }
+        }
+
+        fineDetails.append("\nYour total debt amount is: ").append(totalDebt).append(" AZN.\n\n")
+                .append("To avoid higher fines, we kindly request that " +
+                        "you return the books and settle your debt as soon as possible.\n\n")
+                .append("Thank you for your attention.\n\n")
+                .append("Sincerely,\n")
+                .append("Library Management System");
+
+        message.setText(fineDetails.toString());
+        mailSender.send(message);
+    }
+
+    public void sendDailyDebtNotifications() {
+        for (User user : userRepo.findAll()) {
+            if (user.calculateTotalDebt().compareTo(BigDecimal.ZERO) > 0) {
+                sendMailDebtMessage(user);  // Borcu olan istifadəçilərə mail massage göndərirem
+            }
+        }
     }
 }

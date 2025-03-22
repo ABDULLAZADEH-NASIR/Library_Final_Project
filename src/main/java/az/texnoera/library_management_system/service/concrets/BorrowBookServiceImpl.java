@@ -48,10 +48,10 @@ public class BorrowBookServiceImpl implements BorrowBookService {
 
     @Override
     public void deleteBorrowByBorrowId(Long id) {
-        BorrowBook borrowBook=borrowBookRepo.findById(id).orElseThrow(()->
+        BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
                 new RuntimeException("BorrowBook not found"));
         borrowBookRepo.delete(borrowBook);
-        
+
     }
 
 

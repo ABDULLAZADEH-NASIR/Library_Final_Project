@@ -41,7 +41,6 @@ public class BorrowBook {
 
     private boolean isReturned = false;
 
-    // Avtomatik olaraq returnDate təyin edilir(yeni yarandigi tarixe esasen)
     @PrePersist
     public void setReturnDateAutomatically() {
         if (this.returnDate == null) {
@@ -49,24 +48,14 @@ public class BorrowBook {
         }
     }
 
+    // Cəriməni hesablayan metod
     public void calculateFine() {
         if (!isReturned && LocalDate.now().isAfter(returnDate)) {
             long overdueDays = ChronoUnit.DAYS.between(returnDate, LocalDate.now());
-            BigDecimal finePerDay = new BigDecimal("5");  // Gecikmə üçün hər gün 5 manat cərmə
+            BigDecimal finePerDay = new BigDecimal("5"); // Gecikmə üçün hər gün 5 manat cərmə hesablayir
             this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
         } else {
             this.fineAmountAZN = BigDecimal.ZERO;
-        }
-    }
-
-    @PostPersist
-    @PostUpdate
-    public void updateUserTotalDebt() {
-        this.calculateFine();  // Cərmə avtomatik hesablanır
-        if (fineAmountAZN.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal currentUserDebt = user.getTotalDebt();  // İstifadəçinin hazirkı borcu
-            BigDecimal updatedUserDebt = currentUserDebt.add(this.fineAmountAZN);  // Yeni cərmə ilə cəmlə
-            user.setTotalDebt(updatedUserDebt);
         }
     }
 }

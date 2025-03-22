@@ -31,4 +31,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<BorrowBook> borrowedBooks = new HashSet<>();
 
+    // Hesablama metodu hansiki umumi borc hesablayir
+    public BigDecimal calculateTotalDebt() {
+        BigDecimal totalDebt = BigDecimal.ZERO;
+        for (BorrowBook borrowBook : borrowedBooks) {
+            totalDebt = totalDebt.add(borrowBook.getFineAmountAZN());
+        }
+        return totalDebt;
+    }
 }
