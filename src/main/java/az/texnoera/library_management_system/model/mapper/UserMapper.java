@@ -13,6 +13,8 @@ public interface UserMapper {
     static User userRequestForUser(UserRequest userRequest) {
         return User.builder()
                 .name(userRequest.getName())
+                .surname(userRequest.getSurname())
+                .FIN(userRequest.getFIN())
                 .email(userRequest.getEmail())
                 .password(userRequest.getPassword())
                 .build();
@@ -22,8 +24,9 @@ public interface UserMapper {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
+                .surname(user.getSurname())
+                .FIN(user.getFIN())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .build();
     }
 
@@ -31,8 +34,9 @@ public interface UserMapper {
         return UserResponseWithBorrow.builder()
                 .id(user.getId())
                 .name(user.getName())
+                .surname(user.getSurname())
+                .FIN(user.getFIN())
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .borrowedBooks(user.getBorrowedBooks().stream().map(b->
                         BorrowBookResponseForUser.builder()
                                 .borrowedBookId(b.getId())

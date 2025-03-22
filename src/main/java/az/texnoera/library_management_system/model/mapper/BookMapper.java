@@ -1,11 +1,14 @@
 package az.texnoera.library_management_system.model.mapper;
 
 import az.texnoera.library_management_system.entity.Book;
+import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.BookCategory;
+import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -26,7 +29,7 @@ public interface BookMapper {
             category = BookCategory.valueOf(bookRequest.getCategory().trim().toUpperCase());  // Enum-a çevrilir
         } catch (IllegalArgumentException e) {
             // Əgər yanlış category gəlirsə, default olaraq "DETECTIVE" təyin etdim
-            throw new RuntimeException("Invalid category: " + bookRequest.getCategory());
+            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND);
         }
 
         return Book.builder()

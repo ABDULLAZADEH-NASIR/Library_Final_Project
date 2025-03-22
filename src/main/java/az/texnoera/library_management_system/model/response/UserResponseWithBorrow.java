@@ -15,7 +15,7 @@ public class UserResponseWithBorrow {
     private Long id;
     private String name;
     private String surname;
-    private String password;
+    private String FIN;
     private String email;
     private Set<BorrowBookResponseForUser>borrowedBooks;
 }

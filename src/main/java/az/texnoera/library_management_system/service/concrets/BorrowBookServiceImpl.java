@@ -2,6 +2,8 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.entity.User;
+import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.BorrowBookMapper;
 import az.texnoera.library_management_system.model.request.BorrowBookRequest;
 import az.texnoera.library_management_system.model.response.BorrowBookResponse;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +38,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Override
     public BorrowBookResponse getBorrowById(Long id) {
         BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("BorrowBook not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
         return BorrowBookMapper.borrowBookToResponse(borrowBook);
     }
 
@@ -49,7 +52,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Override
     public void deleteBorrowByBorrowId(Long id) {
         BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("BorrowBook not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
         borrowBookRepo.delete(borrowBook);
 
     }

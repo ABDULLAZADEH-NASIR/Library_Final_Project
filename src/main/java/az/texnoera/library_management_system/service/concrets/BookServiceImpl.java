@@ -2,7 +2,9 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.entity.Book;
+import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.BookCategory;
+import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.BookMapper;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,14 +52,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse getBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new RuntimeException("Book not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         return BookMapper.BookToBookResponse(book);
     }
 
     @Override
     public BookResponse getBookByBookName(String bookName) {
         Book book = bookRepo.findBookByName(bookName).orElseThrow(() ->
-                new RuntimeException("Book not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         return BookMapper.BookToBookResponse(book);
     }
 
@@ -64,7 +67,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new RuntimeException("Book not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         bookRepo.delete(book);
     }
 
@@ -72,8 +75,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new RuntimeException("Book not found"));
-       BookMapper.bookUpdateToBook(book, bookRequest);
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        BookMapper.bookUpdateToBook(book, bookRequest);
         return BookMapper.BookToBookResponse(bookRepo.save(book));
     }
 
@@ -81,7 +84,7 @@ public class BookServiceImpl implements BookService {
     public Result<BookResponse> getBooksByBookCategory(String category, int page, int size) {
         String categoryFilter = category.toUpperCase();
         Pageable page3 = PageRequest.of(page, size);
-        Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(categoryFilter),page3);
+        Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(categoryFilter), page3);
 
         List<BookResponse> bookResponses = books.stream()
                 .map(BookMapper::BookToBookResponse).toList();

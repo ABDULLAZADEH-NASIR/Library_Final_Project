@@ -2,6 +2,8 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.entity.User;
+import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -81,14 +84,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("User not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userForUserResponse(user);
     }
 
     @Override
     public UserResponseWithBorrow getUserBorrowedById(Long id) {
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
-                new RuntimeException("User not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userForUserResponseWithBorrow(user);
     }
 
@@ -102,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Long id) {
         User user = userRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("User not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         userRepo.delete(user);
     }
 
@@ -110,7 +113,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
         User user = userRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("User not found"));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         UserMapper.userUpdateRequestForUser(user, userRequest);
         return UserMapper.userForUserResponse(userRepo.save(user));
 
