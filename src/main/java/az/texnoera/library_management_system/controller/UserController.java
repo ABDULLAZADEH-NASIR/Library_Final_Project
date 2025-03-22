@@ -23,7 +23,7 @@ public class UserController {
 
 
     @PostMapping("/verify-OTP")
-    public String verifyOTP( @RequestBody String otp) {
+    public String verifyOTP(@RequestBody String otp) {
         return userService.verifyOtp(otp);
     }
 
@@ -34,13 +34,13 @@ public class UserController {
 
     @GetMapping("/search-with-borrow/{id}")
     public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
-        return  userService.getUserBorrowedById(id);
+        return userService.getUserBorrowedById(id);
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers(@RequestParam(defaultValue = "0")int page,
-                                          @RequestParam(defaultValue = "10")int size) {
-        return userService.getAllUsers(page,size);
+    public List<UserResponse> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        return userService.getAllUsers(page, size);
     }
 
     @DeleteMapping("/{id}")
@@ -51,7 +51,6 @@ public class UserController {
     @PutMapping("/{id}")
     public UserResponse updateUserById(@PathVariable Long id,
                                        @RequestBody UserRequestForUpdate userRequest) {
-          return userService.updateUserById(id,userRequest);
+        return userService.updateUserById(id, userRequest);
     }
-
 }

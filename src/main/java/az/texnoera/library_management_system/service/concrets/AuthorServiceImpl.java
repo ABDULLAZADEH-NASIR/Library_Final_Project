@@ -80,13 +80,14 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
         Book book = bookRepo.findBookById(bookId).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND,StatusCode.BOOK_NOT_FOUND));
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         author.getBooks().add(book);
         book.getAuthors().add(author);
         authorRepo.save(author);
         bookRepo.save(book);
         return AuthorMapper.authorToAuthorResponse(author);
     }
+
     @Transactional
     @Override
     public AuthorResponse removeBookFromAuthor(Long authorId, Long bookId) {
