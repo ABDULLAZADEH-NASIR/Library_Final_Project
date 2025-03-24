@@ -21,8 +21,6 @@ public interface BorrowBookMapper {
                 .bookName(borrowBook.getBook().getName())
                 .userId(borrowBook.getUser().getId())
                 .borrowDate(borrowBook.getBorrowDate())
-                .isReturned(borrowBook.isReturned())
-                .isReturned(borrowBook.isReturned())
                 .build();
     }
 

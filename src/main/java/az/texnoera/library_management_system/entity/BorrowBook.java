@@ -39,7 +39,6 @@ public class BorrowBook {
     @NotNull
     private LocalDate returnDate;
 
-    private boolean isReturned = false;
 
     @PrePersist
     public void setReturnDateAutomatically() {
@@ -50,12 +49,14 @@ public class BorrowBook {
 
     // Cəriməni hesablayan metod
     public void calculateFine() {
-        if (!isReturned && LocalDate.now().isAfter(returnDate)) {
+        if (LocalDate.now().isAfter(returnDate)) {
             long overdueDays = ChronoUnit.DAYS.between(returnDate, LocalDate.now());
-            BigDecimal finePerDay = new BigDecimal("5"); // Gecikmə üçün hər gün 5 manat cərmə hesablayir
-            this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
-        } else {
-            this.fineAmountAZN = BigDecimal.ZERO;
+            BigDecimal finePerDay = new BigDecimal("5"); // Gecikmə üçün hər gün 5 manat cərmə hesablayır
+
+            // Əgər cərimə əvvəldən hesablanmayıbsa (kitab qaytarılmayıbsa), onu hesabla
+            if (fineAmountAZN.equals(BigDecimal.ZERO)) {
+                this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
+            }
         }
     }
 }

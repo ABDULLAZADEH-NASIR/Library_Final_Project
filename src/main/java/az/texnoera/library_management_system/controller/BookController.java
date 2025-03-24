@@ -27,8 +27,8 @@ public class BookController {
         return bookServiceImpl.getBookById(id);
     }
 
-    @GetMapping("/search-bookName")
-    public BookResponse getBookByName(@RequestParam String bookName) {
+    @GetMapping("/search/bookName/{bookName}")
+    public BookResponse getBookByName(@PathVariable String bookName) {
         return bookServiceImpl.getBookByBookName(bookName);
 
     }
@@ -50,8 +50,8 @@ public class BookController {
 
     }
 
-    @GetMapping("/search-bookCategory")
-    public Result<BookResponse> getBooksByBookCategory(@RequestParam String category,
+    @GetMapping("/search/bookCategory/{category}")
+    public Result<BookResponse> getBooksByBookCategory(@PathVariable String category,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
         return bookServiceImpl.getBooksByBookCategory(category,page,size);

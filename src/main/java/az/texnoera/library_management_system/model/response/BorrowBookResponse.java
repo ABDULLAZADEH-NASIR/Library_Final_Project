@@ -22,5 +22,4 @@ public class BorrowBookResponse {
     private BigDecimal fineAmountAZN;
     private LocalDate borrowDate;
     private LocalDate returnDate;
-    private boolean isReturned;
 }
