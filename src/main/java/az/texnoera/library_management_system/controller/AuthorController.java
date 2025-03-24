@@ -25,7 +25,7 @@ public class AuthorController {
         return authorService.getAuthorById(id);
     }
 
-    @GetMapping("/search/")
+    @GetMapping("/search-by-name/")
     public AuthorResponse getAuthorByName(@RequestParam String name) {
         return authorService.getAuthorByAuthorName(name);
     }

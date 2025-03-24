@@ -8,6 +8,7 @@ import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
+import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
 import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
 import az.texnoera.library_management_system.repo.UserRepo;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String createUser(UserRequest userRequest) {
-        User user = UserMapper.userRequestForUser(userRequest);
+        User user = UserMapper.userRequestToUser(userRequest);
         String otp = otpService.generateOtp();
         otpService.saveOtp(userRequest.getEmail(), otp);
         this.tempUser = user;
@@ -59,25 +61,28 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepo.findById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
-        return UserMapper.userForUserResponse(user);
+        return UserMapper.userToUserResponse(user);
     }
 
     @Override
     public UserResponseWithBorrow getUserBorrowedById(Long id) {
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
-        return UserMapper.userForUserResponseWithBorrow(user);
+        return UserMapper.userToUserResponseWithBorrow(user);
     }
 
     @Override
-    public List<UserResponse> getAllUsers(int page, int size) {
+    public Result<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> users = userRepo.findAllUsers(pageable);
-        return users.stream().map(UserMapper::userForUserResponse).toList();
+        List<UserResponse> userList = users.getContent().stream()
+                .map(UserMapper::userToUserResponse).toList();
+        return new Result<>(userList, page, size, users.getTotalPages());
     }
 
     @Override
@@ -92,9 +97,16 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
         User user = userRepo.findById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
-        UserMapper.userUpdateRequestForUser(user, userRequest);
-        return UserMapper.userForUserResponse(userRepo.save(user));
+        UserMapper.userUpdateRequestToUser(user, userRequest);
+        return UserMapper.userToUserResponse(userRepo.save(user));
 
+    }
+
+    @Override
+    public UserResponseWithBorrow getUserByFin(String fin) {
+        User user=userRepo.findUserByFIN(fin).orElseThrow(()->
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+        return UserMapper.userToUserResponseWithBorrow(user);
     }
 
 

@@ -10,7 +10,7 @@ import az.texnoera.library_management_system.model.response.UserResponseWithBorr
 import java.util.stream.Collectors;
 
 public interface UserMapper {
-    static User userRequestForUser(UserRequest userRequest) {
+    static User userRequestToUser(UserRequest userRequest) {
         return User.builder()
                 .name(userRequest.getName())
                 .surname(userRequest.getSurname())
@@ -20,7 +20,7 @@ public interface UserMapper {
                 .build();
     }
 
-    static UserResponse userForUserResponse(User user) {
+    static UserResponse userToUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -30,7 +30,7 @@ public interface UserMapper {
                 .build();
     }
 
-    static UserResponseWithBorrow userForUserResponseWithBorrow(User user) {
+    static UserResponseWithBorrow userToUserResponseWithBorrow(User user) {
         return UserResponseWithBorrow.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -45,10 +45,8 @@ public interface UserMapper {
                 .build();
     }
 
-    static void userUpdateRequestForUser(User user, UserRequestForUpdate userRequest) {
-        User.builder()
-                .name(userRequest.getName())
-                .surname(userRequest.getSurname())
-                .build();
+    static void userUpdateRequestToUser(User user, UserRequestForUpdate userRequest) {
+        user.setName(userRequest.getName());
+        user.setSurname(userRequest.getSurname());
     }
 }

@@ -7,6 +7,7 @@ import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
+import az.texnoera.library_management_system.model.response.AuthorResponseForBook;
 import az.texnoera.library_management_system.model.response.BookResponse;
 import org.springframework.http.HttpStatus;
 
@@ -49,17 +50,17 @@ public interface BookMapper {
         return BookResponse.builder()
                 .id(book.getId())
                 .name(book.getName())
-                .authors(book.getAuthors().stream().map(author ->
-                                AuthorResponse.builder()
-                                        .name(author.getName())
-                                        .surname(author.getSurname())
-                                        .build())
-                        .collect(Collectors.toSet()))
                 .bookCategory(book.getCategory().name())
                 .pages(book.getPages())
                 .totalBookCount(book.getTotalBooksCount())
                 .availableBookCount(book.getAvialableBooksCount())
                 .year(book.getYear())
+                .authors(book.getAuthors().stream().map(author ->
+                                AuthorResponseForBook.builder()
+                                        .name(author.getName())
+                                        .surname(author.getSurname())
+                                        .build())
+                        .collect(Collectors.toSet()))
                 .build();
     }
 

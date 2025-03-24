@@ -34,9 +34,7 @@ public interface AuthorMapper {
     }
 
     static void authorToAuthorResponseUpdate(Author author, AuthorRequest authorRequest) {
-        Author.builder()
-                .name(authorRequest.getName())
-                .surname(authorRequest.getSurname())
-                .build();
+        author.setName(authorRequest.getName());
+        author.setSurname(authorRequest.getSurname());
     }
 }

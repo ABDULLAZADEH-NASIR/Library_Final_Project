@@ -16,9 +16,10 @@ public class BookResponse {
     private Long id;
     private String name;
     private String bookCategory;
-    private Set<AuthorResponse>authors;
     private int year;
     private int pages;
     private Long totalBookCount;
     private Long availableBookCount;
+    private Set<AuthorResponseForBook>authors;
+
 }

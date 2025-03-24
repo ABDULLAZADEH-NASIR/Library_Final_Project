@@ -12,10 +12,16 @@ import java.util.Set;
 
 public interface BookService {
     Result<BookResponse> getAllBooks(int page, int size);
+
     BookResponse getBookById(Long id);
+
     BookResponse getBookByBookName(String bookName);
+
     BookResponse createBook(BookRequest bookRequest);
+
     void deleteBookById(Long id);
+
     BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest);
+
     Result<BookResponse> getBooksByBookCategory(String category, int page, int size);
 }

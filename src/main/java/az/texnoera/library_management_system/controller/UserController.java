@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.controller;
 
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
+import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
 import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
@@ -27,19 +28,19 @@ public class UserController {
         return userService.verifyOtp(otp);
     }
 
-    @GetMapping("/search-by-id/{id}")
+    @GetMapping("/search/userId/{id}")
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/search-with-borrow/{id}")
+    @GetMapping("/search/{id}/borrows")
     public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
         return userService.getUserBorrowedById(id);
     }
 
     @GetMapping
-    public List<UserResponse> getAllUsers(@RequestParam(defaultValue = "0") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
+    public Result<UserResponse> getAllUsers(@RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
         return userService.getAllUsers(page, size);
     }
 
@@ -52,5 +53,10 @@ public class UserController {
     public UserResponse updateUserById(@PathVariable Long id,
                                        @RequestBody UserRequestForUpdate userRequest) {
         return userService.updateUserById(id, userRequest);
+    }
+
+    @GetMapping("search/FIN/{fin}")
+    public UserResponseWithBorrow getUserByFin(@PathVariable String fin) {
+        return userService.getUserByFin(fin);
     }
 }

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class NotificationService {
     private final JavaMailSender mailSender;
+
     public void sendMailDebtMessage(User user) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
