@@ -53,10 +53,11 @@ public class BorrowBook {
             long overdueDays = ChronoUnit.DAYS.between(returnDate, LocalDate.now());
             BigDecimal finePerDay = new BigDecimal("5"); // Gecikmə üçün hər gün 5 manat cərmə hesablayır
 
-            // Əgər cərimə əvvəldən hesablanmayıbsa (kitab qaytarılmayıbsa), onu hesabla
-            if (fineAmountAZN.equals(BigDecimal.ZERO)) {
-                this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
-            }
+            // Həmişə cəriməni yenidən hesablayir
+            this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
+        } else {
+            // Kitab gecikməyibsə yeni qaytarilma gecikmeyibse, cərimə 0 olaraq qalır
+            this.fineAmountAZN = BigDecimal.ZERO;
         }
     }
 }
