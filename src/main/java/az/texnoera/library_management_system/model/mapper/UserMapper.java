@@ -27,6 +27,7 @@ public interface UserMapper {
                 .surname(user.getSurname())
                 .FIN(user.getFIN())
                 .email(user.getEmail())
+                .totalDebit(user.getTotalDebt())
                 .build();
     }
 
@@ -42,6 +43,7 @@ public interface UserMapper {
                                 .borrowedBookId(b.getId())
                                 .BookName(b.getBook().getName())
                                 .build()).collect(Collectors.toSet()))
+                .totalDebt(user.getTotalDebt())
                 .build();
     }
 

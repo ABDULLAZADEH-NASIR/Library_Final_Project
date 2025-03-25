@@ -12,7 +12,7 @@ import java.util.List;
 public interface UserService {
     String createUser(UserRequest userRequest);
 
-    String verifyOtp(String otp);
+    String verifyOtp(int otp);
 
     UserResponse getUserById(Long id);
 

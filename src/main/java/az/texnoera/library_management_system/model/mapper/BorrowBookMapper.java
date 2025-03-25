@@ -20,7 +20,12 @@ public interface BorrowBookMapper {
                 .bookId(borrowBook.getBook().getId())
                 .bookName(borrowBook.getBook().getName())
                 .userId(borrowBook.getUser().getId())
+                .userName(borrowBook.getUser().getName())
+                .userSurname(borrowBook.getUser().getSurname())
+                .FIN(borrowBook.getUser().getFIN())
+                .fineAmountAZN(borrowBook.getFineAmountAZN())
                 .borrowDate(borrowBook.getBorrowDate())
+                .returnDate(borrowBook.getReturnDate())
                 .build();
     }
 

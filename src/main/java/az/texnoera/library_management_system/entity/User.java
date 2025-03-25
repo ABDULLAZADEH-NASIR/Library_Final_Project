@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,8 +28,7 @@ public class User {
     private String password;
     @NotNull
     private String email;
-
-    private BigDecimal totalDebt = BigDecimal.ZERO;
+    private BigDecimal totalDebt = BigDecimal.valueOf(0);
 
     @OneToMany(mappedBy = "user")
     private Set<BorrowBook> borrowedBooks = new HashSet<>();

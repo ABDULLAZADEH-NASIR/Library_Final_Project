@@ -16,8 +16,11 @@ import java.time.LocalDate;
 @Builder
 public class BorrowBookResponse {
     private Long id;
-    private Long bookId;
     private Long userId;
+    private String userName;
+    private String userSurname;
+    private String FIN;
+    private Long bookId;
     private String bookName;
     private BigDecimal fineAmountAZN;
     private LocalDate borrowDate;

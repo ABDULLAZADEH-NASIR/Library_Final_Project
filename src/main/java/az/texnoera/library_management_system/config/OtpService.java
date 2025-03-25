@@ -16,42 +16,42 @@ public class OtpService {
     private final JavaMailSender mailSender;
     private static final int OTP_VALID_MINUTES = 5;
 
-    // Yaddaşda OTP-lərin saxlanması
-    private final Map<String, String> otpStore = new HashMap<>();
-    private final Map<String, LocalDateTime> otpExpirationStore = new HashMap<>(); // OTP-nin bitmə vaxtı
+    // Yaddaşda OTP-lərin saxlanması, indi OTP Integer kimi saxlanılır
+    private final Map<String, Integer> otpStore = new HashMap<>();
+    private final Map<String, LocalDateTime> otpExpirationStore = new HashMap<>();
 
-    public String generateOtp() {
+    public int generateOtp() {
         Random random = new Random();
-        int otp = 1000 + random.nextInt(9000); // 4 rəqəmli OTP kodu
-        return String.valueOf(otp);
+        // 4 rəqəmli OTP kodu (1000-dən 9999-a kimi)
+        int otp = 1000 + random.nextInt(9000);
+        return otp;
     }
 
-    public void saveOtp(String email, String otp) {
+    public void saveOtp(String email, int otp) {
         otpStore.put(email, otp);
-        otpExpirationStore.put(email, LocalDateTime.now().plusMinutes(OTP_VALID_MINUTES)); // OTP-nin bitmə vaxtı
+        otpExpirationStore.put(email, LocalDateTime.now().plusMinutes(OTP_VALID_MINUTES));
     }
 
-    public boolean validateOtp(String email, String otp) {
-        String storedOtp = otpStore.get(email);
+    public boolean validateOtp(String email, int otp) {
+        Integer storedOtp = otpStore.get(email);
         LocalDateTime expirationTime = otpExpirationStore.get(email);
 
-        // OTP-nin vaxtını və dəyərini yoxlayırıq
         if (storedOtp == null || expirationTime == null || expirationTime.isBefore(LocalDateTime.now())) {
-            otpStore.remove(email); // OTP vaxtı bitibsə, silirik
-            otpExpirationStore.remove(email); // Bitmə vaxtını da silirik
-            return false; // OTP keçərli deyil
+            otpStore.remove(email);
+            otpExpirationStore.remove(email);
+            return false;
         }
 
         if (storedOtp.equals(otp)) {
-            otpStore.remove(email); // OTP doğru olduqda silirik
-            otpExpirationStore.remove(email); // Bitmə vaxtını da silirik
+            otpStore.remove(email);
+            otpExpirationStore.remove(email);
             return true;
         }
 
         return false;
     }
 
-    public void sendOtpEmail(String toEmail, String otp) {
+    public void sendOtpEmail(String toEmail, int otp) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
         message.setSubject("OTP Verification");

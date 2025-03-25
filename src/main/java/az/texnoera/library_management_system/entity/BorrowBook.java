@@ -1,5 +1,6 @@
 package az.texnoera.library_management_system.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,6 @@ public class BorrowBook {
 
     private BigDecimal fineAmountAZN = BigDecimal.ZERO;
 
-    @NotNull
     @CreationTimestamp
     private LocalDate borrowDate;
     @NotNull
@@ -41,12 +41,16 @@ public class BorrowBook {
 
 
     @PrePersist
-    public void setReturnDateAutomatically() {
+    public void setDatesAutomatically() {
+        if (this.borrowDate == null) {
+            this.borrowDate = LocalDate.now();
+        }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusDays(10);
+            this.returnDate = this.borrowDate.plusDays(1);
         }
     }
 
+    @PreUpdate
     // Cəriməni hesablayan metod
     public void calculateFine() {
         if (LocalDate.now().isAfter(returnDate)) {

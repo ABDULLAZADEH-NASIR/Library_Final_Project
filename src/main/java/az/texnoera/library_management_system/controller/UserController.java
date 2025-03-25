@@ -24,7 +24,7 @@ public class UserController {
 
 
     @PostMapping("/verify-OTP")
-    public String verifyOTP(@RequestBody String otp) {
+    public String verifyOTP(@RequestBody int otp) {
         return userService.verifyOtp(otp);
     }
 

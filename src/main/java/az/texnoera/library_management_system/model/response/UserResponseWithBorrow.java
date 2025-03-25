@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -18,4 +19,5 @@ public class UserResponseWithBorrow {
     private String FIN;
     private String email;
     private Set<BorrowBookResponseForUser>borrowedBooks;
+    private BigDecimal totalDebt;
 }

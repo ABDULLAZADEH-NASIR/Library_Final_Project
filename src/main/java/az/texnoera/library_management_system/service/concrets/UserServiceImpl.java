@@ -38,15 +38,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public String createUser(UserRequest userRequest) {
         User user = UserMapper.userRequestToUser(userRequest);
-        String otp = otpService.generateOtp();
+        int otp = otpService.generateOtp();         // OTP int olaraq yaradılır
         otpService.saveOtp(userRequest.getEmail(), otp);
         this.tempUser = user;
         otpService.sendOtpEmail(userRequest.getEmail(), otp);
-        return ("OTP has been sent to your email. Please verify...");
+        return "OTP has been sent to your email. Please verify...";
     }
 
     @Override
-    public String verifyOtp(String otp) {
+    public String verifyOtp(int otp) {  // OTP int kimi qəbul edilir
         if (tempUser == null) {
             return "No registration process is currently active.";
         }
@@ -59,7 +59,6 @@ public class UserServiceImpl implements UserService {
         } else {
             return "Invalid OTP. Please try again.";
         }
-
     }
 
     @Override
@@ -110,7 +109,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(cron = "0 1 0 * * ?")
     public void sendScheduledDebtNotifications() {
         sendDailyDebtNotifications();
     }
