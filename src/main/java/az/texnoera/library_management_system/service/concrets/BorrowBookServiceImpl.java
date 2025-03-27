@@ -1,5 +1,6 @@
 package az.texnoera.library_management_system.service.concrets;
 
+import az.texnoera.library_management_system.entity.Book;
 import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
@@ -8,6 +9,7 @@ import az.texnoera.library_management_system.model.mapper.BorrowBookMapper;
 import az.texnoera.library_management_system.model.request.BorrowBookRequest;
 import az.texnoera.library_management_system.model.response.BorrowBookResponse;
 import az.texnoera.library_management_system.model.response.Result;
+import az.texnoera.library_management_system.repo.BookRepo;
 import az.texnoera.library_management_system.repo.BorrowBookRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
 import az.texnoera.library_management_system.service.abstracts.BorrowBookService;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,6 +28,7 @@ import java.util.List;
 public class BorrowBookServiceImpl implements BorrowBookService {
     private final BorrowBookRepo borrowBookRepo;
     private final UserRepo userRepo;
+    private final BookRepo bookRepo;
 
     @Override
     public Result<BorrowBookResponse> getAllBorrows(int page, int size) {
@@ -42,10 +46,22 @@ public class BorrowBookServiceImpl implements BorrowBookService {
         return BorrowBookMapper.borrowBookToResponse(borrowBook);
     }
 
+    @Transactional
     @Override
     public BorrowBookResponse createBorrow(BorrowBookRequest borrowBookRequest) {
-        BorrowBook borrowBook = BorrowBookMapper.requestToBorrowBook(borrowBookRequest);
+       User user=userRepo.findById(borrowBookRequest.getUserId()).orElseThrow(()->
+               new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+
+        Book book=bookRepo.findById(borrowBookRequest.getBookId()).orElseThrow(()->
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        BorrowBook borrowBook=new BorrowBook();
+        borrowBook.setUser(user);
+        borrowBook.setBook(book);
         borrowBookRepo.save(borrowBook);
+        book.getBorrowBook().add(borrowBook);
+        bookRepo.save(book);
+        user.getBorrowedBooks().add(borrowBook);
+        userRepo.save(user);
         return BorrowBookMapper.borrowBookToResponse(borrowBook);
     }
 

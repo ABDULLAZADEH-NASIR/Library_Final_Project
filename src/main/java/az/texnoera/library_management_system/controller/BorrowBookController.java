@@ -27,7 +27,7 @@ public class BorrowBookController {
         return borrowBookService.getBorrowById(id);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public BorrowBookResponse addBorrowBook(@RequestBody BorrowBookRequest borrowBookRequest) {
         return borrowBookService.createBorrow(borrowBookRequest);
     }

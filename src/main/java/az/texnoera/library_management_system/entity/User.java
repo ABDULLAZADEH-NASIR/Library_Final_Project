@@ -3,13 +3,15 @@ package az.texnoera.library_management_system.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Data
+@ToString
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,10 +30,19 @@ public class User {
     private String password;
     @NotNull
     private String email;
-    private BigDecimal totalDebt = BigDecimal.valueOf(0);
 
-    @OneToMany(mappedBy = "user")
+    private BigDecimal totalDebt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<BorrowBook> borrowedBooks = new HashSet<>();
+
+    @PrePersist
+    @PreUpdate
+    public void ensureTotalDebtNotNull() {
+        if (this.totalDebt == null) {
+            this.totalDebt = BigDecimal.valueOf(0.00);
+        }
+    }
 
     // Hesablama metodu hansiki umumi borc hesablayir
     public BigDecimal calculateTotalDebt() {
@@ -40,5 +51,17 @@ public class User {
             totalDebt = totalDebt.add(borrowBook.getFineAmountAZN());
         }
         return totalDebt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

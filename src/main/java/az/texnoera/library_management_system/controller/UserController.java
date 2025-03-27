@@ -9,8 +9,6 @@ import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -35,7 +33,7 @@ public class UserController {
 
     @GetMapping("/search/{id}/borrows")
     public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
-        return userService.getUserBorrowedById(id);
+        return userService.getUserWithBorrowsById(id);
     }
 
     @GetMapping

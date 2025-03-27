@@ -5,9 +5,6 @@ import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
 import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 public interface UserService {
     String createUser(UserRequest userRequest);
@@ -16,7 +13,7 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
-    UserResponseWithBorrow getUserBorrowedById(Long id);
+    UserResponseWithBorrow getUserWithBorrowsById(Long id);
 
     Result<UserResponse> getAllUsers(int page, int size);
 

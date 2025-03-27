@@ -1,22 +1,20 @@
 package az.texnoera.library_management_system.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@ToString
+@Getter
+@Setter
 @Builder
 @Table(name = "borrow_book")
 public class BorrowBook {
@@ -32,12 +30,14 @@ public class BorrowBook {
     @JoinColumn
     private User user;
 
-    private BigDecimal fineAmountAZN = BigDecimal.ZERO;
+    private BigDecimal fineAmountAZN;
 
     @CreationTimestamp
     private LocalDate borrowDate;
     @NotNull
     private LocalDate returnDate;
+
+
 
 
     @PrePersist
@@ -48,20 +48,35 @@ public class BorrowBook {
         if (this.returnDate == null) {
             this.returnDate = this.borrowDate.plusDays(1);
         }
+        if (this.fineAmountAZN == null) {
+            this.fineAmountAZN = BigDecimal.valueOf(0.00);
+        }
     }
 
+
     @PreUpdate
-    // Cəriməni hesablayan metod
     public void calculateFine() {
         if (LocalDate.now().isAfter(returnDate)) {
             long overdueDays = ChronoUnit.DAYS.between(returnDate, LocalDate.now());
-            BigDecimal finePerDay = new BigDecimal("5"); // Gecikmə üçün hər gün 5 manat cərmə hesablayır
+            BigDecimal finePerDay = new BigDecimal("5"); // Hər gün üçün 5 manat cərimə
 
-            // Həmişə cəriməni yenidən hesablayir
-            this.fineAmountAZN = finePerDay.multiply(BigDecimal.valueOf(overdueDays));
+            // Cəriməni artırır, yalnız gecikmə olduqda
+            this.fineAmountAZN = fineAmountAZN.add(finePerDay.multiply(BigDecimal.valueOf(overdueDays)));
         } else {
-            // Kitab gecikməyibsə yeni qaytarilma gecikmeyibse, cərimə 0 olaraq qalır
+            // Kitab gecikməyibsə, cərimə sıfır qalır
             this.fineAmountAZN = BigDecimal.ZERO;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BorrowBook borrowBook)) return false;
+        return Objects.equals(id, borrowBook.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

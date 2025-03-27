@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseWithBorrow getUserBorrowedById(Long id) {
+    public UserResponseWithBorrow getUserWithBorrowsById(Long id) {
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userToUserResponseWithBorrow(user);
