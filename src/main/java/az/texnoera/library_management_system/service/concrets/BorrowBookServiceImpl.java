@@ -49,31 +49,36 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Transactional
     @Override
     public BorrowBookResponse createBorrow(BorrowBookRequest borrowBookRequest) {
-       User user=userRepo.findById(borrowBookRequest.getUserId()).orElseThrow(()->
-               new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+        User user = userRepo.findById(borrowBookRequest.getUserId()).orElseThrow(() ->
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
-        Book book=bookRepo.findById(borrowBookRequest.getBookId()).orElseThrow(()->
+        Book book = bookRepo.findById(borrowBookRequest.getBookId()).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
-        BorrowBook borrowBook=new BorrowBook();
-        borrowBook.setUser(user);
-        borrowBook.setBook(book);
-        borrowBookRepo.save(borrowBook);
-        book.getBorrowBook().add(borrowBook);
-        book.setAvialableBooksCount(book.getAvialableBooksCount()-1);
-        bookRepo.save(book);
-        user.getBorrowedBooks().add(borrowBook);
-        userRepo.save(user);
-        return BorrowBookMapper.borrowBookToResponse(borrowBook);
+
+        if (book.getAvialableBooksCount() > 0) {
+            BorrowBook borrowBook = new BorrowBook();
+            borrowBook.setUser(user);
+            borrowBook.setBook(book);
+            borrowBookRepo.save(borrowBook);
+            book.getBorrowBook().add(borrowBook);
+            book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
+            bookRepo.save(book);
+            user.getBorrowedBooks().add(borrowBook);
+            userRepo.save(user);
+            return BorrowBookMapper.borrowBookToResponse(borrowBook);
+        } else {
+            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.BOOK_NOT_AVAILABLE);
+        }
     }
+
     @Transactional
     @Override
     public void deleteBorrowByBorrowId(Long id) {
         BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
-        Book book=bookRepo.findBookById(borrowBook.getBook().getId()).orElseThrow(()->
+        Book book = bookRepo.findBookById(borrowBook.getBook().getId()).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
-        book.getBorrowBook().remove(borrowBook);
-        book.setAvialableBooksCount(book.getAvialableBooksCount()+1);
+        book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
         bookRepo.save(book);
         borrowBookRepo.delete(borrowBook);
     }

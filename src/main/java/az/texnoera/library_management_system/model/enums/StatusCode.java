@@ -8,11 +8,12 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public enum StatusCode {
-    USER_NOT_FOUND(1000,"User not found"),
-    BOOK_NOT_FOUND(1001,"Book not found"),
-    AUTHOR_NOT_FOUND(1002,"Author not found"),
-    BORROW_NOT_FOUND(1003,"Borrow not found"),
-    CATEGORY_NOT_FOUND(1004,"Category not found");
+    USER_NOT_FOUND(1000, "User not found"),
+    BOOK_NOT_FOUND(1001, "Book not found"),
+    AUTHOR_NOT_FOUND(1002, "Author not found"),
+    BORROW_NOT_FOUND(1003, "Borrow not found"),
+    CATEGORY_NOT_FOUND(1004, "Category not found"),
+    BOOK_NOT_AVAILABLE(1005, "Book not available");
 
     private final int code;
     private final String message;
