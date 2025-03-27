@@ -59,19 +59,22 @@ public class BorrowBookServiceImpl implements BorrowBookService {
         borrowBook.setBook(book);
         borrowBookRepo.save(borrowBook);
         book.getBorrowBook().add(borrowBook);
+        book.setAvialableBooksCount(book.getAvialableBooksCount()-1);
         bookRepo.save(book);
         user.getBorrowedBooks().add(borrowBook);
         userRepo.save(user);
         return BorrowBookMapper.borrowBookToResponse(borrowBook);
     }
-
+    @Transactional
     @Override
     public void deleteBorrowByBorrowId(Long id) {
         BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
+        Book book=bookRepo.findBookById(borrowBook.getBook().getId()).orElseThrow(()->
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        book.getBorrowBook().remove(borrowBook);
+        book.setAvialableBooksCount(book.getAvialableBooksCount()+1);
+        bookRepo.save(book);
         borrowBookRepo.delete(borrowBook);
-
     }
-
-
 }
