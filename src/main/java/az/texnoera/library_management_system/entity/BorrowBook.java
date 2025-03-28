@@ -1,16 +1,12 @@
 package az.texnoera.library_management_system.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -39,12 +35,12 @@ public class BorrowBook {
     private BigDecimal fineAmountAZN;
 
     @CreationTimestamp
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime borrowDate;
-    @NotNull
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime returnDate;
 
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime returnDate;
 
 
     @PrePersist

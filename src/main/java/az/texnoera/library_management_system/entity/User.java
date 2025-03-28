@@ -1,5 +1,6 @@
 package az.texnoera.library_management_system.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -51,6 +52,11 @@ public class User {
             totalDebt = totalDebt.add(borrowBook.getFineAmountAZN());
         }
         this.totalDebt = totalDebt;
+    }
+
+    @JsonProperty("totalDebt")
+    public String getFormattedTotalDebt() {
+        return totalDebt != null ? String.format("%.2f AZN", totalDebt.doubleValue()) : "0.00 AZN";
     }
 
     @Override
