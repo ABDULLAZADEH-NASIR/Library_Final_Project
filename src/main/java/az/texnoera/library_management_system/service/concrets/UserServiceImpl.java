@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.config.NotificationService;
 import az.texnoera.library_management_system.config.OtpService;
+import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.StatusCode;
@@ -108,15 +109,23 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Scheduled(cron = "0 1 0 * * ?")
-    public void sendScheduledDebtNotifications() {
-        sendDailyDebtNotifications();
-    }
 
-    public void sendDailyDebtNotifications() {
-        for (User user : userRepo.findAll()) {
-            if (user.calculateTotalDebt().compareTo(BigDecimal.ZERO) > 0) {
-                notificationService.sendMailDebtMessage(user);  // NotificationService çağırılır
+    @Scheduled(cron = "0 */15 * * * ?")
+    public void sendScheduledDebtNotifications() {
+        Set<User> users = userRepo.findAllUsersWithBorrowedBooks(); // Set<User> gəlir
+
+        for (User user : users) { // Set-i birbaşa iterasiya edə bilərik
+            // Borcları yenilə
+            for (BorrowBook borrowBook : user.getBorrowedBooks()) {
+                borrowBook.calculateFine(); // Kitabın borcunu yenilə
+            }
+
+            user.updateTotalDebt(); // Ümumi borcu yenilə
+            userRepo.save(user); // Yenilənmiş borcu DB-ə yaz
+
+            // Əgər borc varsa email göndər
+            if (user.getTotalDebt().compareTo(BigDecimal.ZERO) > 0) {
+                notificationService.sendMailDebtMessage(user);
             }
         }
     }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
@@ -21,4 +22,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.borrowedBooks WHERE u.FIN=:fin")
     Optional<User> findUserByFIN(String fin);
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.borrowedBooks")
+    Set<User> findAllUsersWithBorrowedBooks();
 }

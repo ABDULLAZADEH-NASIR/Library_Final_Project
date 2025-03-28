@@ -40,17 +40,17 @@ public class User {
     @PreUpdate
     public void ensureTotalDebtNotNull() {
         if (this.totalDebt == null) {
-            this.totalDebt = BigDecimal.valueOf(0.00);
+            this.totalDebt = BigDecimal.ZERO;
         }
     }
 
-    // Hesablama metodu hansiki umumi borc hesablayir
-    public BigDecimal calculateTotalDebt() {
+    // Total borcu hesablayıb `totalDebt`-ə yazırıq
+    public void updateTotalDebt() {
         BigDecimal totalDebt = BigDecimal.ZERO;
         for (BorrowBook borrowBook : borrowedBooks) {
             totalDebt = totalDebt.add(borrowBook.getFineAmountAZN());
         }
-        return totalDebt;
+        this.totalDebt = totalDebt;
     }
 
     @Override

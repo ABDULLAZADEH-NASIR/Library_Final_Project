@@ -33,7 +33,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Override
     public Result<BorrowBookResponse> getAllBorrows(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BorrowBook> borrowBooks = borrowBookRepo.findAll(pageable);
+        Page<BorrowBook> borrowBooks = borrowBookRepo.findAllBorrowBooks(pageable);
         List<BorrowBookResponse> borrowBookResponses = borrowBooks.stream().
                 map(BorrowBookMapper::borrowBookToResponse).toList();
         return new Result<>(borrowBookResponses, page, size, borrowBooks.getTotalPages());
@@ -41,7 +41,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
 
     @Override
     public BorrowBookResponse getBorrowById(Long id) {
-        BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
+        BorrowBook borrowBook = borrowBookRepo.findBorrowBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
         return BorrowBookMapper.borrowBookToResponse(borrowBook);
     }
@@ -74,7 +74,7 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     @Transactional
     @Override
     public void deleteBorrowByBorrowId(Long id) {
-        BorrowBook borrowBook = borrowBookRepo.findById(id).orElseThrow(() ->
+        BorrowBook borrowBook = borrowBookRepo.findBorrowBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
         Book book = bookRepo.findBookById(borrowBook.getBook().getId()).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));

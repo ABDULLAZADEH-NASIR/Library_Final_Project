@@ -6,6 +6,8 @@ import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.model.request.BorrowBookRequest;
 import az.texnoera.library_management_system.model.response.BorrowBookResponse;
 
+import java.time.LocalDate;
+
 public interface BorrowBookMapper {
     static BorrowBook requestToBorrowBook(BorrowBookRequest borrowBookRequest) {
         return BorrowBook.builder()
@@ -24,8 +26,8 @@ public interface BorrowBookMapper {
                 .userSurname(borrowBook.getUser().getSurname())
                 .FIN(borrowBook.getUser().getFIN())
                 .fineAmountAZN(borrowBook.getFineAmountAZN())
-                .borrowDate(borrowBook.getBorrowDate())
-                .returnDate(borrowBook.getReturnDate())
+                .borrowDate(LocalDate.from(borrowBook.getBorrowDate()).atStartOfDay())
+                .returnDate(LocalDate.from(borrowBook.getReturnDate()).atStartOfDay())
                 .build();
     }
 

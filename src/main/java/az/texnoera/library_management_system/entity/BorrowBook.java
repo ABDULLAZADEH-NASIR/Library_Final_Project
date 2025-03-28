@@ -1,11 +1,17 @@
 package az.texnoera.library_management_system.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -33,38 +39,41 @@ public class BorrowBook {
     private BigDecimal fineAmountAZN;
 
     @CreationTimestamp
-    private LocalDate borrowDate;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime borrowDate;
     @NotNull
-    private LocalDate returnDate;
-
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    private LocalDateTime returnDate;
 
 
 
     @PrePersist
     public void setDatesAutomatically() {
         if (this.borrowDate == null) {
-            this.borrowDate = LocalDate.now();
+            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
         }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusDays(1);
+            this.returnDate = this.borrowDate.plusMinutes(10); // 10 dəqiqə sonra qaytarılmalıdır
         }
         if (this.fineAmountAZN == null) {
-            this.fineAmountAZN = BigDecimal.valueOf(0.00);
+            this.fineAmountAZN = BigDecimal.ZERO;
         }
     }
 
-
     @PreUpdate
     public void calculateFine() {
-        if (LocalDate.now().isAfter(returnDate)) {
-            long overdueDays = ChronoUnit.DAYS.between(returnDate, LocalDate.now());
-            BigDecimal finePerDay = new BigDecimal("5"); // Hər gün üçün 5 manat cərimə
+        if (LocalDateTime.now().isAfter(returnDate)) {
+            long overdueMinutes = ChronoUnit.MINUTES.between(returnDate, LocalDateTime.now());
+            BigDecimal finePerMinute = new BigDecimal("5");
 
-            // Cəriməni artırır, yalnız gecikmə olduqda
-            this.fineAmountAZN = fineAmountAZN.add(finePerDay.multiply(BigDecimal.valueOf(overdueDays)));
+            this.fineAmountAZN = finePerMinute.multiply(BigDecimal.valueOf(overdueMinutes));
         } else {
-            // Kitab gecikməyibsə, cərimə sıfır qalır
             this.fineAmountAZN = BigDecimal.ZERO;
+        }
+
+        // User-in borcunu yenilə
+        if (this.user != null) {
+            this.user.updateTotalDebt(); // User-in ümumi borcunu yenilə
         }
     }
 

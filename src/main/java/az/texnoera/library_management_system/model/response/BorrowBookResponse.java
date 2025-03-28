@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -23,6 +24,6 @@ public class BorrowBookResponse {
     private Long bookId;
     private String bookName;
     private BigDecimal fineAmountAZN;
-    private LocalDate borrowDate;
-    private LocalDate returnDate;
+    private LocalDateTime borrowDate;
+    private LocalDateTime returnDate;
 }
