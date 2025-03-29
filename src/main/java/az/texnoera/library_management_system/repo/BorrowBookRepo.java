@@ -17,5 +17,4 @@ public interface BorrowBookRepo extends JpaRepository<BorrowBook, Long> {
     @Query("SELECT b FROM BorrowBook b LEFT JOIN FETCH b.user WHERE b.id=:id")
     Optional<BorrowBook> findBorrowBookById(Long id);
 
-
 }

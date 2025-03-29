@@ -16,7 +16,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.borrowedBooks WHERE u.id=:id")
     Optional<User> findUserWithBorrow(Long id);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.borrowedBooks")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.borrowedBooks ORDER BY u.name ASC ")
     Page<User> findAllUsers(Pageable pageable);
 
     @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.borrowedBooks WHERE u.FIN=:fin")

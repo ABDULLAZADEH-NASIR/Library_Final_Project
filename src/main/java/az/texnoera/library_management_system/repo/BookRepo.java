@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface BookRepo extends JpaRepository<Book, Long> {
 
-    @Query("SELECT DISTINCT b from Book b LEFT  JOIN  FETCH  b.authors ")
+    @Query("SELECT DISTINCT b from Book b LEFT  JOIN  FETCH  b.authors ORDER BY b.name ASC ")
     Page<Book> findAllBooks(Pageable pageable);
 
     @Query("SELECT DISTINCT  b  FROM Book b LEFT JOIN FETCH b.authors where b.id=:id")

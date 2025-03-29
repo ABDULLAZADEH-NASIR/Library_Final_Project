@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface AuthorRepo extends JpaRepository<Author, Long> {
-    @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books")
+    @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books ORDER BY a.name ASC ")
     Page<Author> findAllAuthors(Pageable pageable);
 
     @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books WHERE a.id=:id")
