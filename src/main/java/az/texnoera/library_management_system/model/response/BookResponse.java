@@ -1,6 +1,5 @@
 package az.texnoera.library_management_system.model.response;
 
-import az.texnoera.library_management_system.entity.Author;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +19,5 @@ public class BookResponse {
     private int pages;
     private Long totalBookCount;
     private Long availableBookCount;
-    private Set<AuthorResponseForBook>authors;
-
+    private Set<AuthorResponseForBook> authors;
 }

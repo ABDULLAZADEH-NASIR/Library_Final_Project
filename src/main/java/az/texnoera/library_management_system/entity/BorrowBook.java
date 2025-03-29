@@ -2,8 +2,6 @@ package az.texnoera.library_management_system.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 

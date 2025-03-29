@@ -38,7 +38,7 @@ public interface UserMapper {
                 .surname(user.getSurname())
                 .FIN(user.getFIN())
                 .email(user.getEmail())
-                .borrowedBooks(user.getBorrowedBooks().stream().map(b->
+                .borrowedBooks(user.getBorrowedBooks().stream().map(b ->
                         BorrowBookResponseForUser.builder()
                                 .borrowedBookId(b.getId())
                                 .BookName(b.getBook().getName())

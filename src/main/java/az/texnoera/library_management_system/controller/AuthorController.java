@@ -20,7 +20,7 @@ public class AuthorController {
         return authorService.getAllAuthors(page, size);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/search/{id}")
     public AuthorResponse getAuthorById(@PathVariable Long id) {
         return authorService.getAuthorById(id);
     }
@@ -30,7 +30,7 @@ public class AuthorController {
         return authorService.getAuthorByAuthorName(name);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteAuthorById(@PathVariable Long id) {
         authorService.deleteAuthorById(id);
     }
@@ -40,7 +40,7 @@ public class AuthorController {
         return authorService.createAuthor(authorRequest);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public AuthorResponse updateAuthorById(@PathVariable Long id,
                                            @RequestBody AuthorRequest authorRequest) {
         return authorService.updateAuthorById(id, authorRequest);
@@ -58,7 +58,7 @@ public class AuthorController {
 
     @DeleteMapping("/{authorId}/remove-book/{bookId}")
     public AuthorResponse removeBookFromAuthor(@PathVariable Long authorId,
-                                             @PathVariable Long bookId) {
+                                               @PathVariable Long bookId) {
 
         return authorService.removeBookFromAuthor(authorId, bookId);
 

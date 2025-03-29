@@ -1,6 +1,5 @@
 package az.texnoera.library_management_system.service.concrets;
 
-import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.entity.Book;
 import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.BookCategory;
@@ -19,12 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,10 @@
 package az.texnoera.library_management_system.entity;
 
 import az.texnoera.library_management_system.model.enums.BookCategory;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -31,7 +31,6 @@ public class Book {
     private Long totalBooksCount;
     @NotNull
     private Long avialableBooksCount;
-    @Nullable
     @Enumerated(EnumType.STRING)
     private BookCategory category;
 

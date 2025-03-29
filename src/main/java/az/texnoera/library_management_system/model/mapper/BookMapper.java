@@ -6,12 +6,10 @@ import az.texnoera.library_management_system.model.enums.BookCategory;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
-import az.texnoera.library_management_system.model.response.AuthorResponse;
 import az.texnoera.library_management_system.model.response.AuthorResponseForBook;
 import az.texnoera.library_management_system.model.response.BookResponse;
 import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 

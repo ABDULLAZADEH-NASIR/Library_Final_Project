@@ -14,7 +14,7 @@ public enum StatusCode {
     BORROW_NOT_FOUND(1003, "Borrow not found"),
     CATEGORY_NOT_FOUND(1004, "Category not found"),
     BOOK_NOT_AVAILABLE(1005, "Book not available"),
-    CATEGORY_MISSING(1006, "Category missing" ),;
+    CATEGORY_MISSING(1006, "Category missing");
 
     private final int code;
     private final String message;

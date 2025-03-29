@@ -1,6 +1,5 @@
 package az.texnoera.library_management_system.controller;
 
-import az.texnoera.library_management_system.entity.BorrowBook;
 import az.texnoera.library_management_system.model.request.BorrowBookRequest;
 import az.texnoera.library_management_system.model.response.BorrowBookResponse;
 import az.texnoera.library_management_system.model.response.Result;
@@ -8,7 +7,6 @@ import az.texnoera.library_management_system.service.concrets.BorrowBookServiceI
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class BorrowBookController {
         return borrowBookService.createBorrow(borrowBookRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteBorrowBook(@PathVariable Long id) {
         borrowBookService.deleteBorrowByBorrowId(id);
     }

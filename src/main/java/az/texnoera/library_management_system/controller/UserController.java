@@ -31,7 +31,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/search/{id}/borrows")
+    @GetMapping("/search/user-with-borrows/{id}")
     public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
         return userService.getUserWithBorrowsById(id);
     }
@@ -42,18 +42,18 @@ public class UserController {
         return userService.getAllUsers(page, size);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public UserResponse updateUserById(@PathVariable Long id,
                                        @RequestBody UserRequestForUpdate userRequest) {
         return userService.updateUserById(id, userRequest);
     }
 
-    @GetMapping("search/FIN/{fin}")
+    @GetMapping("search/user-with-FIN/{fin}")
     public UserResponseWithBorrow getUserByFin(@PathVariable String fin) {
         return userService.getUserByFin(fin);
     }

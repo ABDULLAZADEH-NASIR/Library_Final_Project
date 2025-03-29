@@ -18,6 +18,6 @@ public class UserResponseWithBorrow {
     private String FIN;
     private String email;
     private String totalDebtAzn;
-    private Set<BorrowBookResponseForUser>borrowedBooks;
+    private Set<BorrowBookResponseForUser> borrowedBooks;
 
 }

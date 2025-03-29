@@ -17,5 +17,4 @@ public class BasedExceptions extends RuntimeException {
         this.httpStatusCode = httpStatusCode1;
         this.statusCode = statusCode1;
     }
-
 }

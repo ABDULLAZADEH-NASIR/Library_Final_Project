@@ -4,7 +4,6 @@ package az.texnoera.library_management_system.model.mapper;
 import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.model.request.AuthorRequest;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
-import az.texnoera.library_management_system.model.response.BookResponse;
 import az.texnoera.library_management_system.model.response.BookResponseForAuthor;
 
 import java.util.HashSet;

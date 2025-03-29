@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class Result<T> {
     private List<T> data;
-    private  int page;
+    private int page;
     private int size;
     private int total;
 

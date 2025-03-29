@@ -103,11 +103,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseWithBorrow getUserByFin(String fin) {
-        User user=userRepo.findUserByFIN(fin).orElseThrow(()->
+        User user = userRepo.findUserByFIN(fin).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userToUserResponseWithBorrow(user);
     }
-
 
 
     @Scheduled(cron = "0 */15 * * * ?")

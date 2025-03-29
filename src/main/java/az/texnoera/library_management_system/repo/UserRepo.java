@@ -1,7 +1,6 @@
 package az.texnoera.library_management_system.repo;
 
 import az.texnoera.library_management_system.entity.User;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -22,7 +22,7 @@ public class BookController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/search/{id}")
     public BookResponse getBookById(@PathVariable Long id) {
         return bookServiceImpl.getBookById(id);
     }
@@ -38,12 +38,12 @@ public class BookController {
         return bookServiceImpl.createBook(bookRequest);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public void deleteBookById(@PathVariable Long id) {
         bookServiceImpl.deleteBookById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public BookResponse updateBook(@PathVariable Long id,
                                    @RequestBody BookRequestForBookUpdate bookRequest) {
         return bookServiceImpl.updateBookById(id,bookRequest);

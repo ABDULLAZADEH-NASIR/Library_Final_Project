@@ -1,6 +1,5 @@
 package az.texnoera.library_management_system.model.request;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

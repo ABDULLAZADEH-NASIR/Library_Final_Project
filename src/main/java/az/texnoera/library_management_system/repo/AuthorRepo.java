@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface AuthorRepo extends JpaRepository<Author, Long> {
     @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books")
-    Page<Author> findAllAuthors( Pageable pageable);
+    Page<Author> findAllAuthors(Pageable pageable);
 
     @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books WHERE a.id=:id")
     Optional<Author> findByAuthorId(Long id);
