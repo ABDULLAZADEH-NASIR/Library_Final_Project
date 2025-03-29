@@ -35,7 +35,7 @@ public class AuthorController {
         authorService.deleteAuthorById(id);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public AuthorResponse addAuthor(@RequestBody AuthorRequest authorRequest) {
         return authorService.createAuthor(authorRequest);
     }

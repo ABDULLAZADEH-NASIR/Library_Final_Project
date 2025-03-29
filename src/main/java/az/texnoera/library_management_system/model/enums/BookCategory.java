@@ -9,6 +9,7 @@ import lombok.ToString;
 @ToString
 public enum BookCategory {
     DETECTIVE,
+    SCIENCE,
     ROMANCE,
     DRAMA,
     HISTORY;

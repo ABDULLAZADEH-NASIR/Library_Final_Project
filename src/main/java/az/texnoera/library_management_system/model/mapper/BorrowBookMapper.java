@@ -26,9 +26,9 @@ public interface BorrowBookMapper {
                 .userName(borrowBook.getUser().getName())
                 .userSurname(borrowBook.getUser().getSurname())
                 .FIN(borrowBook.getUser().getFIN())
-                .fineAmountAZN(borrowBook.getFineAmountAZN()) // Fine amountu formatlayırıq
-                .borrowDate(borrowBook.getBorrowDate())  // Tarixi formatlayırıq
-                .returnDate(borrowBook.getReturnDate())  // Tarixi formatlayırıq
+                .fineAmountAZN(String.valueOf(borrowBook.getFineAmountAZN())) // Fine amountu formatlayırıq
+                .borrowDate(String.valueOf(borrowBook.getBorrowDate()))  // Tarixi formatlayırıq
+                .returnDate(String.valueOf(borrowBook.getReturnDate()))  // Tarixi formatlayırıq
                 .build();
     }
 }

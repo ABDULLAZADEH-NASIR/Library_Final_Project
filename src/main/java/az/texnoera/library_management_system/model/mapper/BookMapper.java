@@ -11,6 +11,7 @@ import az.texnoera.library_management_system.model.response.AuthorResponseForBoo
 import az.texnoera.library_management_system.model.response.BookResponse;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
@@ -20,18 +21,18 @@ public interface BookMapper {
     static Book BookRequestToBook(BookRequest bookRequest) {
 
         if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
-            bookRequest.setCategory("DETECTIVE");  // Default olaraq "DETECTIVE" təyin etdim
+            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Vəziyyəti səhv olaraq işarələyirik
         }
 
-        // bookRequest-dən category-nin enum dəyərinə çevrilməsi
+        // Enum dəyərini exact match ilə yoxlayırıq
         BookCategory category;
         try {
-
-            category = BookCategory.valueOf(bookRequest.getCategory().trim().toUpperCase());  // Enum-a çevrilir
+            // category dəyərini tam uyğun şəkildə enum ilə müqayisə edirik
+            category = BookCategory.valueOf(bookRequest.getCategory().trim()); // Exact match tələb olunur, kiçik/böyük fərqinə baxılır
         } catch (IllegalArgumentException e) {
-            // Əgər yanlış category gəlirsə, default olaraq "DETECTIVE" təyin etdim
-            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND);
+            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun dəyər tapılmadıqda exception atılır
         }
+
 
         return Book.builder()
                 .name(bookRequest.getName())

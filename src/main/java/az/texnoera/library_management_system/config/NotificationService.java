@@ -20,7 +20,7 @@ public class NotificationService {
         user.updateTotalDebt(); // Borcu yenilə
         userRepo.save(user); // Yenilənmiş borcu bazaya yaz
 
-        if (user.getTotalDebt().compareTo(BigDecimal.ZERO) > 0) { // Borc varsa email göndər
+        if (user.getTotalDebtAzn().compareTo(BigDecimal.ZERO) > 0) { // Borc varsa email göndər
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Library Debt Notification");
@@ -33,7 +33,7 @@ public class NotificationService {
                         .append(": ").append(borrowBook.getFineAmountAZN()).append(" AZN\n");
             }
 
-            fineDetails.append("\nYour total debt amount is: ").append(user.getTotalDebt()).append(" AZN.\n\n")
+            fineDetails.append("\nYour total debt amount is: ").append(user.getTotalDebtAzn()).append(" AZN.\n\n")
                     .append("To avoid higher fines, please return the books and settle your debt as soon as possible.\n\n")
                     .append("Thank you.\n\n")
                     .append("Library Management System");

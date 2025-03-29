@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,5 +15,5 @@ public class UserResponse {
     private String surname;
     private String FIN;
     private String email;
-    private BigDecimal totalDebit;
+    private String totalDebitAzn;
 }

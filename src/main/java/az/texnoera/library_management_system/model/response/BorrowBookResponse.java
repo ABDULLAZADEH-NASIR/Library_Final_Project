@@ -23,7 +23,7 @@ public class BorrowBookResponse {
     private String FIN;
     private Long bookId;
     private String bookName;
-    private BigDecimal fineAmountAZN;
-    private LocalDateTime borrowDate;
-    private LocalDateTime returnDate;
+    private String fineAmountAZN;
+    private String borrowDate;
+    private String returnDate;
 }

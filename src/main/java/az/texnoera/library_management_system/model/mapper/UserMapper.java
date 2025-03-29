@@ -27,7 +27,7 @@ public interface UserMapper {
                 .surname(user.getSurname())
                 .FIN(user.getFIN())
                 .email(user.getEmail())
-                .totalDebit(user.getTotalDebt())
+                .totalDebitAzn(String.valueOf(user.getTotalDebtAzn()))
                 .build();
     }
 
@@ -43,7 +43,7 @@ public interface UserMapper {
                                 .borrowedBookId(b.getId())
                                 .BookName(b.getBook().getName())
                                 .build()).collect(Collectors.toSet()))
-                .totalDebt(user.getTotalDebt())
+                .totalDebtAzn(String.valueOf(user.getTotalDebtAzn()))
                 .build();
     }
 

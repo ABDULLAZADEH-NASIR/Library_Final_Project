@@ -33,7 +33,7 @@ public class BookController {
 
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public BookResponse createBookBook( @RequestBody BookRequest bookRequest) {
         return bookServiceImpl.createBook(bookRequest);
     }

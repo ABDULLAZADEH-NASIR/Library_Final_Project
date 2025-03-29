@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -35,25 +36,26 @@ public class BorrowBook {
     private BigDecimal fineAmountAZN;
 
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(columnDefinition = "TIMESTAMP(0)") // Nanosaniyələri sıfırlayır
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime borrowDate;
 
-    @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime returnDate;
 
 
     @PrePersist
     public void setDatesAutomatically() {
         if (this.borrowDate == null) {
-            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyəni saxlayır, nanosaniyələri sıfırlayır
         }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusMinutes(10); // 10 dəqiqə sonra qaytarılmalıdır
+            this.returnDate = this.borrowDate.plusMinutes(10); // Saniyə olduğu kimi qalır
         }
         if (this.fineAmountAZN == null) {
             this.fineAmountAZN = BigDecimal.ZERO;
         }
+
     }
 
     @PreUpdate
