@@ -19,16 +19,16 @@ public interface BookMapper {
     static Book BookRequestToBook(BookRequest bookRequest) {
 
         if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
-            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Vəziyyəti səhv olaraq işarələyirik
+            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Categoriya kimi bos falan data gelse iwe duwecek
         }
 
-        // Enum dəyərini exact match ilə yoxlayırıq
+        // Enum deyeri yaradiriq
         BookCategory category;
         try {
-            // category dəyərini tam uyğun şəkildə enum ilə müqayisə edirik
+            // category deyerinin tam uygun wekilde enum ile muqayise edirik
             category = BookCategory.valueOf(bookRequest.getCategory().trim()); // Exact match tələb olunur, kiçik/böyük fərqinə baxılır
         } catch (IllegalArgumentException e) {
-            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun dəyər tapılmadıqda exception atılır
+            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun deyer tapilmadiqda exception atilir
         }
 
 

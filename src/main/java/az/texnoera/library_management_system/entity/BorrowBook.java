@@ -34,7 +34,7 @@ public class BorrowBook {
     private BigDecimal fineAmountAZN;
 
     @CreationTimestamp
-    @Column(columnDefinition = "TIMESTAMP(0)") // Nanosaniyələri sıfırlayır
+    @Column(columnDefinition = "TIMESTAMP(0)") // Nanosaniyeleri sifirlayir
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime borrowDate;
 
@@ -45,10 +45,10 @@ public class BorrowBook {
     @PrePersist
     public void setDatesAutomatically() {
         if (this.borrowDate == null) {
-            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyəni saxlayır, nanosaniyələri sıfırlayır
+            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusMinutes(10); // Saniyə olduğu kimi qalır
+            this.returnDate = this.borrowDate.plusMinutes(10); // Saniye olduğu kimi qalir
         }
         if (this.fineAmountAZN == null) {
             this.fineAmountAZN = BigDecimal.ZERO;
@@ -67,9 +67,9 @@ public class BorrowBook {
             this.fineAmountAZN = BigDecimal.ZERO;
         }
 
-        // User-in borcunu yenilə
+        // User-in borcunu yenileyir
         if (this.user != null) {
-            this.user.updateTotalDebt(); // User-in ümumi borcunu yenilə
+            this.user.updateTotalDebt(); // User-in umumi borcunu yenileyir
         }
     }
 

@@ -17,8 +17,8 @@ public class NotificationService {
     private final UserRepo userRepo;
 
     public void sendMailDebtMessage(User user) {
-        user.updateTotalDebt(); // Borcu yenilə
-        userRepo.save(user); // Yenilənmiş borcu bazaya yaz
+        user.updateTotalDebt(); // Borcu yenileyir
+        userRepo.save(user); // Yenilenmis borcu DB yazir
 
         if (user.getTotalDebtAzn().compareTo(BigDecimal.ZERO) > 0) { // Borc varsa email göndər
             SimpleMailMessage message = new SimpleMailMessage();

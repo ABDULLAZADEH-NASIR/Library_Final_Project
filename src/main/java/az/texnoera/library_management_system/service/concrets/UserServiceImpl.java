@@ -35,10 +35,11 @@ public class UserServiceImpl implements UserService {
 
     private User tempUser;
 
+    @Transactional
     @Override
     public String createUser(UserRequest userRequest) {
         User user = UserMapper.userRequestToUser(userRequest);
-        int otp = otpService.generateOtp();         // OTP int olaraq yaradılır
+        int otp = otpService.generateOtp();         // OTP int olaraq generate edir
         otpService.saveOtp(userRequest.getEmail(), otp);
         this.tempUser = user;
         otpService.sendOtpEmail(userRequest.getEmail(), otp);
@@ -46,12 +47,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String verifyOtp(int otp) {  // OTP int kimi qəbul edilir
+    public String verifyOtp(int otp) {  // OTP int kimi qebul edir
         if (tempUser == null) {
             return "No registration process is currently active.";
         }
 
-        // OTP doğrulaması
+        // OTP dogrulamasi
         if (otpService.validateOtp(tempUser.getEmail(), otp)) {
             userRepo.save(tempUser);
             tempUser = null;
@@ -111,18 +112,18 @@ public class UserServiceImpl implements UserService {
 
     @Scheduled(cron = "0 */15 * * * ?")
     public void sendScheduledDebtNotifications() {
-        Set<User> users = userRepo.findAllUsersWithBorrowedBooks(); // Set<User> gəlir
+        Set<User> users = userRepo.findAllUsersWithBorrowedBooks();
 
-        for (User user : users) { // Set-i birbaşa iterasiya edə bilərik
-            // Borcları yenilə
+        // Umumi olarag hem kitabin hemde userin borclarini yenileyir (Borc bildirisi yollamaq ucun)
+        for (User user : users) { // Set-i birbaşa iterasiya ede bilərik
             for (BorrowBook borrowBook : user.getBorrowedBooks()) {
-                borrowBook.calculateFine(); // Kitabın borcunu yenilə
+                borrowBook.calculateFine(); // Kitabin borcunu yenileyir
             }
 
-            user.updateTotalDebt(); // Ümumi borcu yenilə
-            userRepo.save(user); // Yenilənmiş borcu DB-ə yaz
+            user.updateTotalDebt(); // Umumi borcu yenileyir
+            userRepo.save(user); // Yenilenmiw borcu DB-e yazir
 
-            // Əgər borc varsa email göndər
+            // Eger borc varsa email gonderir
             if (user.getTotalDebtAzn().compareTo(BigDecimal.ZERO) > 0) {
                 notificationService.sendMailDebtMessage(user);
             }
