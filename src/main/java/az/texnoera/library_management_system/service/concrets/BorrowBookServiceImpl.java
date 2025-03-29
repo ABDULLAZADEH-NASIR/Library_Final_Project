@@ -76,10 +76,18 @@ public class BorrowBookServiceImpl implements BorrowBookService {
     public void deleteBorrowByBorrowId(Long id) {
         BorrowBook borrowBook = borrowBookRepo.findBorrowBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BORROW_NOT_FOUND));
+        User user = borrowBook.getUser();
         Book book = bookRepo.findBookById(borrowBook.getBook().getId()).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
         bookRepo.save(book);
+        // **İstifadəçinin ümumi borcundan bu kitabın borcunu çıxırıq**
+        user.getBorrowedBooks().remove(borrowBook);
+        user.updateTotalDebt(); // Borc yenilənir
+        userRepo.save(user); // Yeni borc məlumatı DB-yə yazılır
+
+        // Borc kitabını tam silirik
+        borrowBookRepo.delete(borrowBook);
         borrowBookRepo.delete(borrowBook);
     }
 }

@@ -27,7 +27,7 @@ public interface UserMapper {
                 .surname(user.getSurname())
                 .FIN(user.getFIN())
                 .email(user.getEmail())
-                .totalDebitAzn(String.valueOf(user.getTotalDebtAzn()))
+                .totalFineAmountAzn(String.valueOf(user.getTotalFineAmountAzn()))
                 .build();
     }
 
@@ -41,9 +41,9 @@ public interface UserMapper {
                 .borrowedBooks(user.getBorrowedBooks().stream().map(b ->
                         BorrowBookResponseForUser.builder()
                                 .borrowedBookId(b.getId())
-                                .BookName(b.getBook().getName())
+                                .bookName(b.getBook().getName())
                                 .build()).collect(Collectors.toSet()))
-                .totalDebtAzn(String.valueOf(user.getTotalDebtAzn()))
+                .totalFineAmountAzn(String.valueOf(user.getTotalFineAmountAzn()))
                 .build();
     }
 

@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BorrowBookResponseForUser {
     private Long borrowedBookId;
-    private String BookName;
+    private String bookName;
 }
