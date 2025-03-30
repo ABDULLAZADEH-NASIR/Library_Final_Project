@@ -33,7 +33,7 @@ public class User {
     @NotNull
     private String email;
 
-    private BigDecimal totalFineAmountAzn;
+    private BigDecimal totalFineAmount;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<BorrowBook> borrowedBooks = new HashSet<>();
@@ -41,8 +41,8 @@ public class User {
     @PrePersist
     @PreUpdate
     public void ensureTotalDebtNotNull() {
-        if (this.totalFineAmountAzn == null) {
-            this.totalFineAmountAzn = BigDecimal.ZERO;
+        if (this.totalFineAmount == null) {
+            this.totalFineAmount = BigDecimal.ZERO;
         }
     }
 
@@ -50,14 +50,14 @@ public class User {
     public void updateTotalDebt() {
         BigDecimal totalDebt = BigDecimal.ZERO;
         for (BorrowBook borrowBook : borrowedBooks) {
-            totalDebt = totalDebt.add(borrowBook.getFineAmountAZN());
+            totalDebt = totalDebt.add(borrowBook.getFineAmount());
         }
-        this.totalFineAmountAzn = totalDebt;
+        this.totalFineAmount = totalDebt;
     }
 
     @JsonProperty("totalDebt")
     public String getFormattedTotalDebt() {
-        return totalFineAmountAzn != null ? String.format("%.2f AZN", totalFineAmountAzn.doubleValue()) : "0.00 AZN";
+        return totalFineAmount != null ? String.format("%.2f AZN", totalFineAmount.doubleValue()) : "0.00 AZN";
     }
 
     @Override

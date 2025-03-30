@@ -17,7 +17,7 @@ public class UserResponseWithBorrow {
     private String surname;
     private String FIN;
     private String email;
-    private String totalFineAmountAzn;
+    private String totalFineAmount;
     private Set<BorrowBookResponseForUser> borrowedBooks;
 
 }

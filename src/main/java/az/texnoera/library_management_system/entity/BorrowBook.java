@@ -31,7 +31,7 @@ public class BorrowBook {
     @JoinColumn
     private User user;
 
-    private BigDecimal fineAmountAZN;
+    private BigDecimal fineAmount;
 
     @CreationTimestamp
     @Column(columnDefinition = "TIMESTAMP(0)") // Nanosaniyeleri sifirlayir
@@ -50,8 +50,8 @@ public class BorrowBook {
         if (this.returnDate == null) {
             this.returnDate = this.borrowDate.plusMinutes(10); // Saniye olduğu kimi qalir
         }
-        if (this.fineAmountAZN == null) {
-            this.fineAmountAZN = BigDecimal.ZERO;
+        if (this.fineAmount == null) {
+            this.fineAmount = BigDecimal.ZERO;
         }
 
     }
@@ -62,9 +62,9 @@ public class BorrowBook {
             long overdueMinutes = ChronoUnit.MINUTES.between(returnDate, LocalDateTime.now());
             BigDecimal finePerMinute = new BigDecimal("5");
 
-            this.fineAmountAZN = finePerMinute.multiply(BigDecimal.valueOf(overdueMinutes));
+            this.fineAmount = finePerMinute.multiply(BigDecimal.valueOf(overdueMinutes));
         } else {
-            this.fineAmountAZN = BigDecimal.ZERO;
+            this.fineAmount = BigDecimal.ZERO;
         }
 
         // User-in borcunu yenileyir

@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
             userRepo.save(user); // Yenilenmiw borcu DB-e yazir
 
             // Eger borc varsa email gonderir
-            if (user.getTotalFineAmountAzn().compareTo(BigDecimal.ZERO) > 0) {
+            if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) {
                 notificationService.sendMailDebtMessage(user);
             }
         }

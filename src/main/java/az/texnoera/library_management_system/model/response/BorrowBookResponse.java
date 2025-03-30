@@ -18,7 +18,7 @@ public class BorrowBookResponse {
     private String FIN;
     private Long bookId;
     private String bookName;
-    private String fineAmountAZN;
+    private String fineAmount;
     private String borrowDate;
     private String returnDate;
 }

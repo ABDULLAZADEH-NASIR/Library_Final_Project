@@ -15,5 +15,5 @@ public class UserResponse {
     private String surname;
     private String FIN;
     private String email;
-    private String totalFineAmountAzn;
+    private String totalFineAmount;
 }

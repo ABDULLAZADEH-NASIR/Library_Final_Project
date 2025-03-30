@@ -14,7 +14,7 @@ public interface BorrowBookMapper {
                 .userName(borrowBook.getUser().getName())
                 .userSurname(borrowBook.getUser().getSurname())
                 .FIN(borrowBook.getUser().getFIN())
-                .fineAmountAZN(String.valueOf(borrowBook.getFineAmountAZN())) // Fine amountu string deyeri kimi goturur
+                .fineAmount(String.valueOf(borrowBook.getFineAmount())) // Fine amountu string deyeri kimi goturur
                 .borrowDate(String.valueOf(borrowBook.getBorrowDate()))  // Tarixi string deyeri kimi goturur
                 .returnDate(String.valueOf(borrowBook.getReturnDate()))  // Tarixi string deyeri kimi goturur
                 .build();
