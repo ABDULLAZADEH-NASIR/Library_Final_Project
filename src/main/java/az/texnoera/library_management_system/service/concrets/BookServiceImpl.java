@@ -8,6 +8,7 @@ import az.texnoera.library_management_system.model.mapper.BookMapper;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.repo.BookRepo;
 import az.texnoera.library_management_system.service.abstracts.BookService;
@@ -28,10 +29,10 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookResponse createBook(BookRequest bookRequest) {
+    public BookResponseWithBookCount createBook(BookRequest bookRequest) {
         Book book = BookMapper.BookRequestToBook(bookRequest);
         book = bookRepo.save(book);
-        return BookMapper.BookToBookResponse(book);
+        return BookMapper.BookToBookResponseWithBookCount(book);
     }
 
     @Override
@@ -45,12 +46,21 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public BookResponseWithBookCount getBookWithCountById(Long id) {
+        Book book = bookRepo.findBookById(id).orElseThrow(() ->
+                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        return BookMapper.BookToBookResponseWithBookCount(book);
+    }
+
+
+    @Override
     public BookResponse getBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         return BookMapper.BookToBookResponse(book);
     }
 
+    
     @Override
     public BookResponse getBookByBookName(String bookName) {
         Book book = bookRepo.findBookByName(bookName).orElseThrow(() ->
@@ -68,11 +78,11 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
+    public BookResponseWithBookCount updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         BookMapper.bookUpdateToBook(book, bookRequest);
-        return BookMapper.BookToBookResponse(bookRepo.save(book));
+        return BookMapper.BookToBookResponseWithBookCount(bookRepo.save(book));
     }
 
     @Override
@@ -85,4 +95,6 @@ public class BookServiceImpl implements BookService {
                 .map(BookMapper::BookToBookResponse).toList();
         return new Result<>(bookResponses, page, size, books.getTotalPages());
     }
+
+
 }

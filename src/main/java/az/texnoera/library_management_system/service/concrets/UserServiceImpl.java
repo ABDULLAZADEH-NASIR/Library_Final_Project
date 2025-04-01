@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @Scheduled(cron = "0 */15 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void sendScheduledDebtNotifications() {
         Set<User> users = userRepo.findAllUsersWithBorrowedBooks();
 

@@ -48,7 +48,7 @@ public class BorrowBook {
             this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusMinutes(10); // Saniye olduğu kimi qalir
+            this.returnDate = this.borrowDate.plusMinutes(3); // Saniye olduğu kimi qalir
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;
@@ -60,7 +60,7 @@ public class BorrowBook {
     public void calculateFine() {
         if (LocalDateTime.now().isAfter(returnDate)) {
             long overdueMinutes = ChronoUnit.MINUTES.between(returnDate, LocalDateTime.now());
-            BigDecimal finePerMinute = new BigDecimal("5");
+            BigDecimal finePerMinute = new BigDecimal("1");
 
             this.fineAmount = finePerMinute.multiply(BigDecimal.valueOf(overdueMinutes));
         } else {

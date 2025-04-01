@@ -83,16 +83,16 @@ public class BorrowBookServiceImpl implements BorrowBookService {
         book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
         bookRepo.save(book);
 
-        // İstifadəçinin ümumi borcundan bu kitabın borcunu çıxırıq
+        // Istifadecinin umumi borcundan bu kitabin borcunu cixir
         if (user.getTotalFineAmount() != null) {
             user.setTotalFineAmount(user.getTotalFineAmount().subtract(borrowBook.getFineAmount()));
         }
 
-        // Kitabı istifadəçinin borrow siyahısından çıxarırıq
+        // Kitabi istifadecinin borrow siyahisindan cixarir
         user.getBorrowedBooks().remove(borrowBook);
-        userRepo.save(user); // Yeni borc məlumatı DB-yə yazılır
+        userRepo.save(user); // Yeni borc melumatini DB-ye yazir
 
-        // Borc kitabını tam silirik
+        // Kitab borcunu tam silirik
         borrowBookRepo.delete(borrowBook);
     }
 }

@@ -11,12 +11,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BookResponse {
+public class BookResponseWithBookCount {
     private Long id;
     private String name;
     private String bookCategory;
     private int year;
     private int pages;
+    private Long totalBookCount;
     private Long availableBookCount;
     private Set<AuthorResponseForBook> authors;
 }

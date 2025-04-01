@@ -4,21 +4,24 @@ package az.texnoera.library_management_system.service.abstracts;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
 import az.texnoera.library_management_system.model.response.Result;
 
 
 public interface BookService {
     Result<BookResponse> getAllBooks(int page, int size);
 
-    BookResponse getBookById(Long id);
+    BookResponseWithBookCount getBookWithCountById(Long id);
 
     BookResponse getBookByBookName(String bookName);
 
-    BookResponse createBook(BookRequest bookRequest);
+    BookResponseWithBookCount createBook(BookRequest bookRequest);
 
     void deleteBookById(Long id);
 
-    BookResponse updateBookById(Long id, BookRequestForBookUpdate bookRequest);
+    BookResponseWithBookCount updateBookById(Long id, BookRequestForBookUpdate bookRequest);
 
     Result<BookResponse> getBooksByBookCategory(String category, int page, int size);
+
+    BookResponse getBookById(Long id);
 }

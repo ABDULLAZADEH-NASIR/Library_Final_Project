@@ -8,6 +8,7 @@ import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.AuthorResponseForBook;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashSet;
@@ -44,6 +45,25 @@ public interface BookMapper {
                 .build();
     }
 
+    static BookResponseWithBookCount BookToBookResponseWithBookCount(Book book) {
+        assert book.getCategory() != null;
+        return BookResponseWithBookCount.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .bookCategory(book.getCategory().name())
+                .pages(book.getPages())
+                .totalBookCount(book.getTotalBooksCount())
+                .availableBookCount(book.getAvialableBooksCount())
+                .year(book.getYear())
+                .authors(book.getAuthors().stream().map(author ->
+                                AuthorResponseForBook.builder()
+                                        .name(author.getName())
+                                        .surname(author.getSurname())
+                                        .build())
+                        .collect(Collectors.toSet()))
+                .build();
+    }
+
     static BookResponse BookToBookResponse(Book book) {
         assert book.getCategory() != null;
         return BookResponse.builder()
@@ -51,7 +71,6 @@ public interface BookMapper {
                 .name(book.getName())
                 .bookCategory(book.getCategory().name())
                 .pages(book.getPages())
-                .totalBookCount(book.getTotalBooksCount())
                 .availableBookCount(book.getAvialableBooksCount())
                 .year(book.getYear())
                 .authors(book.getAuthors().stream().map(author ->

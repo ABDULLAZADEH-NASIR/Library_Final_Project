@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.controller;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.service.concrets.BookServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class BookController {
 
     }
 
+    @GetMapping("/search-with-count/{id}")
+    public BookResponseWithBookCount getBookWithCountById(@PathVariable Long id) {
+        return bookServiceImpl.getBookWithCountById(id);
+    }
+
+
     @GetMapping("/search/{id}")
     public BookResponse getBookById(@PathVariable Long id) {
         return bookServiceImpl.getBookById(id);
@@ -34,7 +41,7 @@ public class BookController {
     }
 
     @PostMapping("/create")
-    public BookResponse createBookBook( @RequestBody BookRequest bookRequest) {
+    public BookResponseWithBookCount createBookBook(@RequestBody BookRequest bookRequest) {
         return bookServiceImpl.createBook(bookRequest);
     }
 
@@ -44,9 +51,9 @@ public class BookController {
     }
 
     @PutMapping("/update/{id}")
-    public BookResponse updateBook(@PathVariable Long id,
-                                   @RequestBody BookRequestForBookUpdate bookRequest) {
-        return bookServiceImpl.updateBookById(id,bookRequest);
+    public BookResponseWithBookCount updateBook(@PathVariable Long id,
+                                                @RequestBody BookRequestForBookUpdate bookRequest) {
+        return bookServiceImpl.updateBookById(id, bookRequest);
 
     }
 
@@ -54,13 +61,8 @@ public class BookController {
     public Result<BookResponse> getBooksByBookCategory(@PathVariable String category,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
-        return bookServiceImpl.getBooksByBookCategory(category,page,size);
+        return bookServiceImpl.getBooksByBookCategory(category, page, size);
     }
-
-
-
-
-
 
 
 }
