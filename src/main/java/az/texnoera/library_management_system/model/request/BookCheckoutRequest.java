@@ -1,4 +1,4 @@
-package az.texnoera.library_management_system.model.response;
+package az.texnoera.library_management_system.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BorrowBookResponseForUser {
-    private Long borrowedBookId;
-    private String bookName;
+public class BookCheckoutRequest {
+    private Long bookId;
+    private Long userId;
 }

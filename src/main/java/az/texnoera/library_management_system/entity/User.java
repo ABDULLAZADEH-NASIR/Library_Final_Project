@@ -36,7 +36,7 @@ public class User {
     private BigDecimal totalFineAmount;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<BorrowBook> borrowedBooks = new HashSet<>();
+    private Set<BookCheckout> bookCheckouts = new HashSet<>();
 
     @PrePersist
     @PreUpdate
@@ -49,8 +49,8 @@ public class User {
     // Total borcu hesablayıb `totalDebt`-ə yazırıq
     public void updateTotalDebt() {
         BigDecimal totalDebt = BigDecimal.ZERO;
-        for (BorrowBook borrowBook : borrowedBooks) {
-            totalDebt = totalDebt.add(borrowBook.getFineAmount());
+        for (BookCheckout bookCheckout : bookCheckouts) {
+            totalDebt = totalDebt.add(bookCheckout.getFineAmount());
         }
         this.totalFineAmount = totalDebt;
     }

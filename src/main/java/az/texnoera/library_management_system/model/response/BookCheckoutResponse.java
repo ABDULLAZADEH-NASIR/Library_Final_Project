@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BorrowBookResponse {
+public class BookCheckoutResponse {
     private Long id;
     private Long userId;
     private String userName;
@@ -19,6 +19,6 @@ public class BorrowBookResponse {
     private Long bookId;
     private String bookName;
     private String fineAmount;
-    private String borrowDate;
+    private String checkoutDate;
     private String returnDate;
 }

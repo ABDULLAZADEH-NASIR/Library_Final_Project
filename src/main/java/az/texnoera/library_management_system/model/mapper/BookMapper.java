@@ -36,7 +36,7 @@ public interface BookMapper {
         return Book.builder()
                 .name(bookRequest.getName())
                 .authors(new HashSet<>())
-                .borrowBook(new HashSet<>())
+                .bookCheckouts(new HashSet<>())
                 .year(bookRequest.getYear())
                 .pages(bookRequest.getPages())
                 .totalBooksCount(bookRequest.getTotalBookCount())

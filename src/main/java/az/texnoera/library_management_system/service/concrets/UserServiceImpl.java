@@ -2,7 +2,7 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.config.NotificationService;
 import az.texnoera.library_management_system.config.OtpService;
-import az.texnoera.library_management_system.entity.BorrowBook;
+import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.StatusCode;
@@ -11,7 +11,7 @@ import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
-import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
+import az.texnoera.library_management_system.model.response.UserResponseWithBookCheckout;
 import az.texnoera.library_management_system.repo.UserRepo;
 import az.texnoera.library_management_system.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseWithBorrow getUserWithBorrowsById(Long id) {
+    public UserResponseWithBookCheckout getUserWithCheckoutsById(Long id) {
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
-        return UserMapper.userToUserResponseWithBorrow(user);
+        return UserMapper.userToUserResponseWithCheckout(user);
     }
 
     @Override
@@ -103,10 +103,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseWithBorrow getUserByFin(String fin) {
+    public UserResponseWithBookCheckout getUserByFin(String fin) {
         User user = userRepo.findUserByFIN(fin).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
-        return UserMapper.userToUserResponseWithBorrow(user);
+        return UserMapper.userToUserResponseWithCheckout(user);
     }
 
     @Transactional
@@ -116,8 +116,8 @@ public class UserServiceImpl implements UserService {
 
         // Umumi olarag hem kitabin hemde userin borclarini yenileyir (Borc bildirisi yollamaq ucun)
         for (User user : users) { // Set-i birbaşa iterasiya ede bilərik
-            for (BorrowBook borrowBook : user.getBorrowedBooks()) {
-                borrowBook.calculateFine(); // Kitabin borcunu yenileyir
+            for (BookCheckout bookCheckout : user.getBookCheckouts()) {
+                bookCheckout.calculateFine(); // Kitabin borcunu yenileyir
             }
 
             user.updateTotalDebt(); // Umumi borcu yenileyir

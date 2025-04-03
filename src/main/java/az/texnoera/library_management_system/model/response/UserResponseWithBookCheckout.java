@@ -11,13 +11,13 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseWithBorrow {
+public class UserResponseWithBookCheckout {
     private Long id;
     private String name;
     private String surname;
     private String FIN;
     private String email;
     private String totalFineAmount;
-    private Set<BorrowBookResponseForUser> borrowedBooks;
+    private Set<BookCheckoutResponseForUser> BookCheckouts;
 
 }

@@ -4,7 +4,7 @@ import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
-import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
+import az.texnoera.library_management_system.model.response.UserResponseWithBookCheckout;
 
 public interface UserService {
     String createUser(UserRequest userRequest);
@@ -13,7 +13,7 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
-    UserResponseWithBorrow getUserWithBorrowsById(Long id);
+    UserResponseWithBookCheckout getUserWithCheckoutsById(Long id);
 
     Result<UserResponse> getAllUsers(int page, int size);
 
@@ -21,5 +21,5 @@ public interface UserService {
 
     UserResponse updateUserById(Long id, UserRequestForUpdate userRequest);
 
-    UserResponseWithBorrow getUserByFin(String fin);
+    UserResponseWithBookCheckout getUserByFin(String fin);
 }

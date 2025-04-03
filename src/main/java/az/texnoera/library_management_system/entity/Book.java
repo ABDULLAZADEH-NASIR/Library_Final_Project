@@ -31,6 +31,7 @@ public class Book {
     private Long totalBooksCount;
     @NotNull
     private Long avialableBooksCount;
+
     @Enumerated(EnumType.STRING)
     private BookCategory category;
 
@@ -39,7 +40,7 @@ public class Book {
     private Set<Author> authors = new HashSet<>();
 
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<BorrowBook> borrowBook = new HashSet<>();
+    private Set<BookCheckout> bookCheckouts = new HashSet<>();
 
 
     @Override

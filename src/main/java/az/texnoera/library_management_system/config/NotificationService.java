@@ -1,6 +1,6 @@
 package az.texnoera.library_management_system.config;
 
-import az.texnoera.library_management_system.entity.BorrowBook;
+import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ public class NotificationService {
             StringBuilder fineDetails = new StringBuilder("Dear " + user.getName() + " " + user.getSurname() + ",\n\n" +
                     "The following books have been overdue, and fines have been calculated:\n");
 
-            for (BorrowBook borrowBook : user.getBorrowedBooks()) {
-                fineDetails.append("- ").append(borrowBook.getBook().getName())
-                        .append(": ").append(borrowBook.getFineAmount()).append(" AZN\n");
+            for (BookCheckout checkoutBook : user.getBookCheckouts()) {
+                fineDetails.append("- ").append(checkoutBook.getBook().getName())
+                        .append(": ").append(checkoutBook.getFineAmount()).append(" AZN\n");
             }
 
             fineDetails.append("\nYour total debt amount is: ").append(user.getTotalFineAmount()).append(" AZN.\n\n")

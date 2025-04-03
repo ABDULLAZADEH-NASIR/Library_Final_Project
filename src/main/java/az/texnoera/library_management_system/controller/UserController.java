@@ -4,7 +4,7 @@ import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
-import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
+import az.texnoera.library_management_system.model.response.UserResponseWithBookCheckout;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +31,9 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/search/user-with-borrows/{id}")
-    public UserResponseWithBorrow getUserBorrowedById(@PathVariable Long id) {
-        return userService.getUserWithBorrowsById(id);
+    @GetMapping("/search/user-with-checkouts/{id}")
+    public UserResponseWithBookCheckout getUserCheckoutById(@PathVariable Long id) {
+        return userService.getUserWithCheckoutsById(id);
     }
 
     @GetMapping
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     @GetMapping("search/user-with-FIN/{fin}")
-    public UserResponseWithBorrow getUserByFin(@PathVariable String fin) {
+    public UserResponseWithBookCheckout getUserByFin(@PathVariable String fin) {
         return userService.getUserByFin(fin);
     }
 }

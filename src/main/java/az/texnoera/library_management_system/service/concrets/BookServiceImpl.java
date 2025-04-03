@@ -60,7 +60,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.BookToBookResponse(book);
     }
 
-    
+
     @Override
     public BookResponse getBookByBookName(String bookName) {
         Book book = bookRepo.findBookByName(bookName).orElseThrow(() ->

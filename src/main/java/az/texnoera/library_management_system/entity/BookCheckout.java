@@ -1,6 +1,5 @@
 package az.texnoera.library_management_system.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,8 +16,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-@Table(name = "borrow_book")
-public class BorrowBook {
+@Table(name = "book_checkout")
+public class BookCheckout {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,21 +33,18 @@ public class BorrowBook {
     private BigDecimal fineAmount;
 
     @CreationTimestamp
-    @Column(columnDefinition = "TIMESTAMP(0)") // Nanosaniyeleri sifirlayir
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
-    private LocalDateTime borrowDate;
+    private LocalDateTime checkoutDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime returnDate;
 
 
     @PrePersist
     public void setDatesAutomatically() {
-        if (this.borrowDate == null) {
-            this.borrowDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
+        if (this.checkoutDate == null) {
+            this.checkoutDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.borrowDate.plusMinutes(3); // Saniye olduğu kimi qalir
+            this.returnDate = this.checkoutDate.plusMinutes(3); // Saniye olduğu kimi qalir
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;
@@ -76,8 +72,8 @@ public class BorrowBook {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BorrowBook borrowBook)) return false;
-        return Objects.equals(id, borrowBook.id);
+        if (!(o instanceof BookCheckout bookCheckout)) return false;
+        return Objects.equals(id, bookCheckout.id);
     }
 
     @Override

@@ -13,15 +13,15 @@ import java.util.Set;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.borrowedBooks WHERE u.id=:id")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts WHERE u.id=:id")
     Optional<User> findUserWithBorrow(Long id);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.borrowedBooks ORDER BY u.name ASC ")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts ORDER BY u.name ASC ")
     Page<User> findAllUsers(Pageable pageable);
 
-    @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.borrowedBooks WHERE u.FIN=:fin")
+    @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.bookCheckouts WHERE u.FIN=:fin")
     Optional<User> findUserByFIN(String fin);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.borrowedBooks")
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
     Set<User> findAllUsersWithBorrowedBooks();
 }

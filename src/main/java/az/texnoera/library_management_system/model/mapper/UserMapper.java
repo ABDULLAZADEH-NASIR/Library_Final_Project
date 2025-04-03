@@ -3,9 +3,9 @@ package az.texnoera.library_management_system.model.mapper;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
-import az.texnoera.library_management_system.model.response.BorrowBookResponseForUser;
+import az.texnoera.library_management_system.model.response.BookCheckoutResponseForUser;
 import az.texnoera.library_management_system.model.response.UserResponse;
-import az.texnoera.library_management_system.model.response.UserResponseWithBorrow;
+import az.texnoera.library_management_system.model.response.UserResponseWithBookCheckout;
 
 import java.util.stream.Collectors;
 
@@ -31,16 +31,16 @@ public interface UserMapper {
                 .build();
     }
 
-    static UserResponseWithBorrow userToUserResponseWithBorrow(User user) {
-        return UserResponseWithBorrow.builder()
+    static UserResponseWithBookCheckout userToUserResponseWithCheckout(User user) {
+        return UserResponseWithBookCheckout.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .FIN(user.getFIN())
                 .email(user.getEmail())
-                .borrowedBooks(user.getBorrowedBooks().stream().map(b ->
-                        BorrowBookResponseForUser.builder()
-                                .borrowedBookId(b.getId())
+                .BookCheckouts(user.getBookCheckouts().stream().map(b ->
+                        BookCheckoutResponseForUser.builder()
+                                .checkoutBookId(b.getId())
                                 .bookName(b.getBook().getName())
                                 .build()).collect(Collectors.toSet()))
                 .totalFineAmount(String.valueOf(user.getTotalFineAmount()))
