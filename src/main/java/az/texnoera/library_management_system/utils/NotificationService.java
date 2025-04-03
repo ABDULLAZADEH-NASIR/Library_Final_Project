@@ -1,4 +1,4 @@
-package az.texnoera.library_management_system.config;
+package az.texnoera.library_management_system.utils;
 
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
@@ -6,11 +6,12 @@ import az.texnoera.library_management_system.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class NotificationService {
     private final JavaMailSender mailSender;

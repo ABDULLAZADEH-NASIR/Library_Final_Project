@@ -1,7 +1,7 @@
 package az.texnoera.library_management_system.service.concrets;
 
-import az.texnoera.library_management_system.config.NotificationService;
-import az.texnoera.library_management_system.config.OtpService;
+import az.texnoera.library_management_system.utils.NotificationService;
+import az.texnoera.library_management_system.utils.OtpService;
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
 import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
