@@ -1,6 +1,7 @@
 package az.texnoera.library_management_system.repo;
 
 import az.texnoera.library_management_system.entity.User;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,7 @@ public interface UserRepo extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
     Set<User> findAllUsersWithBorrowedBooks();
+
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles")
+    Optional<User> findByEmail( String email);
 }

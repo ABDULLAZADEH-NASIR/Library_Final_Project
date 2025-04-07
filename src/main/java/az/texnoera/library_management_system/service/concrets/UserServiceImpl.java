@@ -1,5 +1,9 @@
 package az.texnoera.library_management_system.service.concrets;
 
+import az.texnoera.library_management_system.entity.Role;
+import az.texnoera.library_management_system.model.request.LoginRequest;
+import az.texnoera.library_management_system.repo.RoleRepo;
+import az.texnoera.library_management_system.security.utilities.JwtUtils;
 import az.texnoera.library_management_system.utils.NotificationService;
 import az.texnoera.library_management_system.utils.OtpService;
 import az.texnoera.library_management_system.entity.BookCheckout;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,27 +37,40 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final NotificationService notificationService;
     private final OtpService otpService;
+    private final RoleRepo roleRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     private User tempUser;
 
     @Transactional
     @Override
-    public String createUser(UserRequest userRequest) {
+    public String register(UserRequest userRequest) {
         User user = UserMapper.userRequestToUser(userRequest);
-        int otp = otpService.generateOtp();         // OTP int olaraq generate edir
+        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+
+        // "ROLE_USER" rolunu tapırıq və yoxlayırıq, əgər tapılmasa, onu yaradıb saxlayırıq
+        Role role = roleRepo.findByName("ROLE_USER")
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName("ROLE_USER");
+                    return roleRepo.save(newRole);
+                });
+
+        user.setRoles(Set.of(role));
+        int otp = otpService.generateOtp();
         otpService.saveOtp(userRequest.getEmail(), otp);
-        this.tempUser = user;
         otpService.sendOtpEmail(userRequest.getEmail(), otp);
+        userRepo.save(user);
+        this.tempUser = user;
         return "OTP has been sent to your email. Please verify...";
     }
 
     @Override
-    public String verifyOtp(int otp) {  // OTP int kimi qebul edir
+    public String verifyOtp(int otp) {
         if (tempUser == null) {
             return "No registration process is currently active.";
         }
-
-        // OTP dogrulamasi
         if (otpService.validateOtp(tempUser.getEmail(), otp)) {
             userRepo.save(tempUser);
             tempUser = null;
@@ -60,6 +78,18 @@ public class UserServiceImpl implements UserService {
         } else {
             return "Invalid OTP. Please try again.";
         }
+    }
+
+
+    public String login(LoginRequest loginRequest) {
+        User user = userRepo.findByEmail(loginRequest.getMail())
+                .orElseThrow(() -> new RuntimeException(String.format("User not found with mail: %s", loginRequest.getMail())));
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Email or password incorrect");
+        }
+        return jwtUtils.generateJwtToken(user.getUsername(),
+                user.getRoles().stream().map(Role::getName).toList());
     }
 
     @Override
@@ -108,6 +138,7 @@ public class UserServiceImpl implements UserService {
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userToUserResponseWithCheckout(user);
     }
+
 
     @Transactional
     @Scheduled(cron = "0 */5 * * * ?")
