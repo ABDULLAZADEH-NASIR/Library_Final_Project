@@ -19,32 +19,32 @@ public class PublicController {
     private final UserServiceImpl userService;
 
 
-    @GetMapping("/all-authors")
+    @GetMapping("/authors/all")
     public Result<AuthorResponse> getAllAuthors(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
         return authorService.getAllAuthors(page, size);
     }
 
-    @GetMapping("/search/author-by-name/")
+    @GetMapping("/authors/search-by-name/")
     public AuthorResponse getAuthorByName(@RequestParam String name) {
         return authorService.getAuthorByAuthorName(name);
     }
 
-    @GetMapping("all-books")
+    @GetMapping("/books/all")
     public Result<BookResponse> getAllBooks(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
         return bookService.getAllBooks(page, size);
 
     }
 
-    @GetMapping("/search-book/bookCategory/{category}")
+    @GetMapping("/books/search-by-bookCategory/{category}")
     public Result<BookResponse> getBooksByBookCategory(@PathVariable String category,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
         return bookService.getBooksByBookCategory(category, page, size);
     }
 
-    @GetMapping("/search/book/{bookName}")
+    @GetMapping("/books/search-by-name/{bookName}")
     public BookResponse getBookByName(@PathVariable String bookName) {
         return bookService.getBookByBookName(bookName);
 

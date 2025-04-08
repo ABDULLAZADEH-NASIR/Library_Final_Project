@@ -16,12 +16,13 @@ public class UserController {
     private final BookServiceImpl bookService;
 
 
-    @PostMapping("/create-checkout-add-book")
-    public BookCheckoutResponse addBookCheckout(@RequestBody BookCheckoutRequest bookCheckoutRequest) {
+    @PostMapping("/bookCheckouts/create-add-book")
+    public BookCheckoutResponse addBookInCheckout(@RequestBody BookCheckoutRequest bookCheckoutRequest) {
         return bookCheckoutService.createCheckout(bookCheckoutRequest);
     }
 
-    @GetMapping("/search-book-with-count/{id}")
+
+    @GetMapping("/bookCheckouts/search-with-count/{id}")
     public BookResponseWithBookCount getBookWithCountById(@PathVariable Long id) {
         return bookService.getBookWithCountById(id);
     }

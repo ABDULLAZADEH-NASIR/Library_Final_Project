@@ -32,6 +32,8 @@ public class BookCheckout {
 
     private BigDecimal fineAmount;
 
+    private boolean isCollected;
+
     @CreationTimestamp
     private LocalDateTime checkoutDate;
 
@@ -44,7 +46,7 @@ public class BookCheckout {
             this.checkoutDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.checkoutDate.plusMinutes(3); // Saniye olduğu kimi qalir
+            this.returnDate = this.checkoutDate.plusMinutes(6); // Saniye olduğu kimi qalir
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;

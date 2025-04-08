@@ -1,9 +1,6 @@
 package az.texnoera.library_management_system.controllers;
 
-import az.texnoera.library_management_system.model.request.AuthorRequest;
-import az.texnoera.library_management_system.model.request.BookRequest;
-import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
-import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
+import az.texnoera.library_management_system.model.request.*;
 import az.texnoera.library_management_system.model.response.*;
 import az.texnoera.library_management_system.service.concrets.AuthorServiceImpl;
 import az.texnoera.library_management_system.service.concrets.BookCheckoutServiceImpl;
@@ -22,29 +19,29 @@ public class AdminController {
     private final UserServiceImpl userService;
 
 
-    @GetMapping("/search-Author/{id}")
+    @GetMapping("/authors/search/{id}")
     public AuthorResponse getAuthorById(@PathVariable Long id) {
         return authorService.getAuthorById(id);
     }
 
-    @DeleteMapping("/delete-author/{id}")
+    @DeleteMapping("/authors/delete/{id}")
     public void deleteAuthorById(@PathVariable Long id) {
         authorService.deleteAuthorById(id);
     }
 
-    @PostMapping("/create-author")
+    @PostMapping("/authors/create")
     public AuthorResponse addAuthor(@RequestBody AuthorRequest authorRequest) {
         return authorService.createAuthor(authorRequest);
     }
 
-    @PutMapping("/update-author/{id}")
+    @PutMapping("/authors/update/{id}")
     public AuthorResponse updateAuthorById(@PathVariable Long id,
                                            @RequestBody AuthorRequest authorRequest) {
         return authorService.updateAuthorById(id, authorRequest);
 
     }
 
-    @PostMapping("/author/{authorId}/add-book/{bookId}")
+    @PostMapping("/authors/{authorId}/add-book/{bookId}")
     public AuthorResponse addBookToAuthor(@PathVariable Long authorId,
                                           @PathVariable Long bookId) {
 
@@ -52,7 +49,7 @@ public class AdminController {
 
     }
 
-    @DeleteMapping("/author/{authorId}/remove-book/{bookId}")
+    @DeleteMapping("/authors/{authorId}/remove-book/{bookId}")
     public AuthorResponse removeBookFromAuthor(@PathVariable Long authorId,
                                                @PathVariable Long bookId) {
 
@@ -60,73 +57,78 @@ public class AdminController {
 
     }
 
-    @GetMapping("/all-book-checkouts")
+    @GetMapping("/bookCheckouts/all")
     public Result<BookCheckoutResponse> getAllBookCheckouts(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size) {
         return bookCheckoutService.getAllCheckouts(page, size);
     }
 
-    @GetMapping("/search-checkoutById/{id}")
+    @GetMapping("/bookCheckouts/search/{id}")
     public BookCheckoutResponse getBookCheckoutById(@PathVariable Long id) {
         return bookCheckoutService.getCheckoutById(id);
     }
 
-    @DeleteMapping("/delete-checkout/{id}")
+    @PutMapping
+    public BookCheckoutResponse updateBookCheckout(@RequestBody CheckoutRequestForStatus request) {
+        return bookCheckoutService.isCollectedBook(request);
+    }
+
+    @DeleteMapping("/bookCheckouts/delete/{id}")
     public void deleteBookCheckout(@PathVariable Long id) {
         bookCheckoutService.deleteCheckoutByCheckoutId(id);
     }
 
-    @GetMapping("/search-book/{id}")
+    @GetMapping("/books/search-book/{id}")
     public BookResponse getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 
-    @PostMapping("/create-book")
+    @PostMapping("/books/create")
     public BookResponseWithBookCount createBook(@RequestBody BookRequest bookRequest) {
         return bookService.createBook(bookRequest);
     }
 
-    @DeleteMapping("/delete-book/{id}")
+    @DeleteMapping("/books/delete/{id}")
     public void deleteBookById(@PathVariable Long id) {
         bookService.deleteBookById(id);
     }
 
-    @PutMapping("/update-book/{id}")
+    @PutMapping("/books/update/{id}")
     public BookResponseWithBookCount updateBook(@PathVariable Long id,
                                                 @RequestBody BookRequestForBookUpdate bookRequest) {
         return bookService.updateBookById(id, bookRequest);
 
     }
 
-    @GetMapping("/search/userId/{id}")
+    @GetMapping("/users/search/{id}")
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/search/user-with-checkouts/{id}")
+    @GetMapping("/users/search/with-checkouts/{id}")
     public UserResponseWithBookCheckout getUserCheckoutById(@PathVariable Long id) {
         return userService.getUserWithCheckoutsById(id);
     }
 
-    @GetMapping("/all-users")
+    @GetMapping("/users/all")
     public Result<UserResponse> getAllUsers(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
         return userService.getAllUsers(page, size);
     }
 
-    @DeleteMapping("/delete-user/{id}")
+    @DeleteMapping("/users/delete/{id}")
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
     }
 
 
-    @PutMapping("/update-user/{id}")
+    @PutMapping("/users/update/{id}")
     public UserResponse updateUserById(@PathVariable Long id,
                                        @RequestBody UserRequestForUpdate userRequest) {
         return userService.updateUserById(id, userRequest);
     }
 
-    @GetMapping("search/user-with-FIN/{fin}")
+    @GetMapping("/users/search-by-FIN/{fin}")
     public UserResponseWithBookCheckout getUserByFin(@PathVariable String fin) {
         return userService.getUserByFin(fin);
     }
