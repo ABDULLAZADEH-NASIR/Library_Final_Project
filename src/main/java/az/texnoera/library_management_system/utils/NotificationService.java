@@ -27,11 +27,11 @@ public class NotificationService {
         message.setTo(user.getEmail());
         message.setSubject("Book Checkout Notification");
 
-        String messageText = ("Hörmətli %s %s,\n\nSiz \"%s\" adlı kitabı %s tarixində götürmüsünüz." +
-                "\nKitabın qaytarılma müddəti: %s." +
-                "\nƏgər kitab vaxtında qaytarılmazsa, gecikən hər *dəqiqə üçün* 1 AZN cərimə tətbiq olunacaq." +
-                "\n\nNəzərinizə çatdırırıq ki, kitabların vaxtında qaytarılması vacibdir." +
-                "\n\nKitabxana İdarəetmə Sistemi")
+        String messageText = ("Dear %s %s,\n\nYou have checked out the book titled \"%s\" on %s." +
+                "\nThe due date for returning the book is: %s." +
+                "\nIf the book is not returned on time, a fine of 1 AZN will be applied *for every minute of delay*." +
+                "\n\nPlease note that returning books on time is important." +
+                "\n\nLibrary Management System")
                 .formatted(
                         user.getName(),
                         user.getSurname(),
