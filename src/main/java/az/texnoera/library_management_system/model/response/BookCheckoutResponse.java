@@ -19,6 +19,7 @@ public class BookCheckoutResponse {
     private Long bookId;
     private String bookName;
     private String fineAmount;
+    private Boolean isCollected;
     private String checkoutDate;
     private String returnDate;
 }

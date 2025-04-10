@@ -68,7 +68,7 @@ public class AdminController {
         return bookCheckoutService.getCheckoutById(id);
     }
 
-    @PutMapping
+    @PutMapping("/bookCheckouts/update")
     public BookCheckoutResponse updateBookCheckout(@RequestBody CheckoutRequestForStatus request) {
         return bookCheckoutService.isCollectedBook(request);
     }

@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.userRequestToUser(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
-        // "ROLE_USER" rolunu tapırıq və yoxlayırıq, əgər tapılmasa, onu yaradıb saxlayırıq
         Role role = roleRepo.findByName("ROLE_USER")
                 .orElseGet(() -> {
                     Role newRole = new Role();
@@ -60,11 +59,17 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of(role));
         int otp = otpService.generateOtp();
         otpService.saveOtp(userRequest.getEmail(), otp);
-        otpService.sendOtpEmail(userRequest.getEmail(), otp);
-        userRepo.save(user);
+        boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
         this.tempUser = user;
-        return "OTP has been sent to your email. Please verify...";
+
+        if (emailSend) {
+            return "OTP has been sent to your email. Please verify...";
+        } else {
+            tempUser = null;
+            return "OTP generated, but email could not be sent. Please try again or contact support.";
+        }
     }
+
 
     @Override
     public String verifyOtp(int otp) {
@@ -143,7 +148,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Scheduled(cron = "0 */5 * * * ?")
     public void sendScheduledDebtNotifications() {
-        Set<User> users = userRepo.findAllUsersWithBorrowedBooks();
+        List<User> users = userRepo.findAllUsersWithBorrowedBooks();
 
         // Umumi olarag hem kitabin hemde userin borclarini yenileyir (Borc bildirisi yollamaq ucun)
         for (User user : users) { // Set-i birbaşa iterasiya ede bilərik

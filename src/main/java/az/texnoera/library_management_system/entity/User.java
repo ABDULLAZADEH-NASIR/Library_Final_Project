@@ -35,6 +35,7 @@ public class User implements UserDetails {
     @NotNull
     private String password;
     @NotNull
+    @Column(unique = true)
     private String email;
 
     private BigDecimal totalFineAmount;

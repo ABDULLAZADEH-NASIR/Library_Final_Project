@@ -54,35 +54,33 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
 
     @Transactional
     @Override
-    public BookCheckoutResponse createCheckout(BookCheckoutRequest borrowBookRequest) {
-        User user = userRepo.findById(borrowBookRequest.getUserId()).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+    public BookCheckoutResponse createCheckout(BookCheckoutRequest bookCheckoutRequest) {
+        User user = userRepo.findById(bookCheckoutRequest.getUserId())
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
-        Book book = bookRepo.findById(borrowBookRequest.getBookId()).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        Book book = bookRepo.findById(bookCheckoutRequest.getBookId())
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
 
-        if (book.getAvialableBooksCount() > 0) {
-            // Kitabın götürülməsi üçün yeni BookCheckout yaradılır
-            BookCheckout bookCheckout = new BookCheckout();
-            bookCheckout.setUser(user);
-            bookCheckout.setBook(book);
-            bookCheckout.setCheckoutDate(LocalDateTime.now()); // Kitabın götürülmə tarixini qeyd et
-            bookCheckoutRepo.save(bookCheckout);
-
-            // Kitab və istifadəçi məlumatlarının yenilənməsi
-            book.getBookCheckouts().add(bookCheckout);
-            book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
-            bookRepo.save(book);
-            user.getBookCheckouts().add(bookCheckout);
-            userRepo.save(user);
-
-            // Kitabın götürülməsi barədə istifadəçiyə qısa bildiriş göndəririk
-            notificationService.sendMailCheckoutNotification(user, book);
-
-            return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
-        } else {
-            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.BOOK_NOT_AVAILABLE);
+        if (book.getAvialableBooksCount() <= 0) {
+            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_AVAILABLE);
         }
+
+        // BookCheckout yaradılır
+        BookCheckout bookCheckout = new BookCheckout();
+        bookCheckout.setUser(user);
+        bookCheckout.setBook(book);
+        bookCheckout.setCheckoutDate(LocalDateTime.now());
+        bookCheckoutRepo.save(bookCheckout);
+
+        // Kitab və istifadəçi obyektləri yenilənir
+        book.getBookCheckouts().add(bookCheckout);
+        book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
+        bookRepo.save(book);
+
+        user.getBookCheckouts().add(bookCheckout);
+        userRepo.save(user);
+
+        return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
     @Transactional
@@ -116,35 +114,38 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(request.getBookCheckoutId())
                 .orElseThrow(() ->
                         new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+
         bookCheckout.setCollected(true);
         bookCheckoutRepo.save(bookCheckout);
+
+        // Kitab götürüldükdən sonra istifadəçiyə email göndərilir
+        notificationService.sendMailCheckoutNotification(bookCheckout);
+
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
-    @Scheduled(cron = "0 0 9 * * *") // Hər gün saat 09:00-da
+    @Scheduled(fixedRate = 60000) // Hər 1 dəqiqədə bir çalışır
     @Transactional
-    public void removeUncollectedCheckoutsAfter3Days() {
+    public void removeUncollectedCheckoutsAfter3Minutes() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime threeDaysAgo = now.minusDays(3);
+        LocalDateTime threeMinutesAgo = now.minusMinutes(5);
 
-        Set<BookCheckout> expiredCheckouts =
-                bookCheckoutRepo.findExpiredUncollectedWithUserAndBook(threeDaysAgo);
+        // 5 dəqiqə əvvəl yaradılmış və hələ götürülməmiş bookcheckout-ları tapırıq
+        Set<BookCheckout> expiredCheckouts = bookCheckoutRepo
+                .findExpiredUncollectedWithUserAndBook(threeMinutesAgo);
 
         for (BookCheckout checkout : expiredCheckouts) {
             User user = checkout.getUser();
             Book book = checkout.getBook();
 
-            // 1. User'dən əlaqəni sil
             if (user != null) {
                 user.getBookCheckouts().remove(checkout);
             }
 
-            // 2. Book'un sayı artırılsın
             if (book != null) {
                 book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
             }
 
-            // 3. BookCheckout silinsin
             bookCheckoutRepo.delete(checkout);
         }
     }

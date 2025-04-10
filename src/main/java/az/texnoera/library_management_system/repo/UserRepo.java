@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,8 +25,8 @@ public interface UserRepo extends JpaRepository<User, Long> {
     Optional<User> findUserByFIN(String fin);
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
-    Set<User> findAllUsersWithBorrowedBooks();
+    List<User> findAllUsersWithBorrowedBooks();
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles")
-    Optional<User> findByEmail( String email);
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email = :email")
+    Optional<User> findByEmail(@NotNull String email);
 }

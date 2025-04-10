@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @RequiredArgsConstructor
@@ -18,17 +19,26 @@ public class NotificationService {
     private final JavaMailSender mailSender;
     private final UserRepo userRepo;
 
-    // Kitab götürülməsi, gecikməsi və cərimə haqqında qısa bildiriş
-    public void sendMailCheckoutNotification(User user, Book book) {
+    public void sendMailCheckoutNotification(BookCheckout checkout) {
+        User user = checkout.getUser();
+        Book book = checkout.getBook();
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Book Checkout Notification");
 
-        String messageText = "Dear " + user.getName() + " "
-                + user.getSurname() + ",\n\nYou have borrowed the book: "
-                + book.getName() + ".\nPlease note: if the book is not picked up within " +
-                "4 minutes, the checkout will be canceled.\nIf the book is not returned on time," +
-                " a fine of 1 AZN per minute will be applied.\n\nLibrary Management System";
+        String messageText = ("Hörmətli %s %s,\n\nSiz \"%s\" adlı kitabı %s tarixində götürmüsünüz." +
+                "\nKitabın qaytarılma müddəti: %s." +
+                "\nƏgər kitab vaxtında qaytarılmazsa, gecikən hər *dəqiqə üçün* 1 AZN cərimə tətbiq olunacaq." +
+                "\n\nNəzərinizə çatdırırıq ki, kitabların vaxtında qaytarılması vacibdir." +
+                "\n\nKitabxana İdarəetmə Sistemi")
+                .formatted(
+                        user.getName(),
+                        user.getSurname(),
+                        book.getName(),
+                        checkout.getCheckoutDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
+                        checkout.getReturnDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+                );
 
         message.setText(messageText);
         mailSender.send(message);
@@ -45,8 +55,9 @@ public class NotificationService {
             message.setSubject("Library Debt Notification");
 
             StringBuilder fineDetails = new StringBuilder
-                    ("Dear " + user.getName() + " " + user.getSurname() + ",\n\n" +
-                    "The following books have been overdue, and fines have been calculated:\n");
+                    (("Dear %s %s,\n\nThe following books have been overdue," +
+                            " and fines have been calculated:\n").formatted(user.getName(),
+                            user.getSurname()));
 
             for (BookCheckout checkoutBook : user.getBookCheckouts()) {
                 fineDetails.append("- ").append(checkoutBook.getBook().getName())

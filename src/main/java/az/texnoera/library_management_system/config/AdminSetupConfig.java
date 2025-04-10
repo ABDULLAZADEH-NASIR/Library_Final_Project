@@ -41,6 +41,7 @@ public class AdminSetupConfig {
             User admin = new User();
             admin.setName("Nasir");
             admin.setSurname("Abdullayev");
+            admin.setFIN("5UY2TS6");
             admin.setEmail("abdullayevnasir6@gmail.com");
             admin.setPassword(passwordEncoder.encode("4145"));
             // Admin rolunu əlavə edirik
