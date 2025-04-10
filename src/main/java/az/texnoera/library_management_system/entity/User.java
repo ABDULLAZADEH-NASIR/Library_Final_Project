@@ -41,7 +41,7 @@ public class User implements UserDetails {
     private BigDecimal totalFineAmount;
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
     @Override
@@ -49,7 +49,7 @@ public class User implements UserDetails {
         return this.email;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<BookCheckout> bookCheckouts = new HashSet<>();
 
 
