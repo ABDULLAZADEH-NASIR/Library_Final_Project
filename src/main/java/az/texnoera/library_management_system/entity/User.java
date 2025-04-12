@@ -3,9 +3,14 @@ package az.texnoera.library_management_system.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -18,7 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,12 +36,22 @@ public class User {
     @NotNull
     private String password;
     @NotNull
+    @Column(unique = true)
     private String email;
-
+    @Positive
     private BigDecimal totalFineAmount;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<BookCheckout> bookCheckouts = new HashSet<>();
+
 
     @PrePersist
     @PreUpdate
@@ -57,8 +72,17 @@ public class User {
 
     @JsonProperty("totalDebt")
     public String getFormattedTotalDebt() {
-        return totalFineAmount != null ? String.format("%.2f AZN", totalFineAmount.doubleValue()) : "0.00 AZN";
+        return totalFineAmount != null ? String.format("%.2f AZN",
+                totalFineAmount.doubleValue()) : "0.00 AZN";
     }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream().map(role ->
+                new SimpleGrantedAuthority(role.getName())).toList();
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -72,3 +96,5 @@ public class User {
         return Objects.hash(id);
     }
 }
+
+

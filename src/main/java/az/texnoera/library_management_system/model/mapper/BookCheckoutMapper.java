@@ -18,6 +18,7 @@ public interface BookCheckoutMapper {
                 .userSurname(bookCheckout.getUser().getSurname())
                 .FIN(bookCheckout.getUser().getFIN())
                 .fineAmount(String.valueOf(bookCheckout.getFineAmount())) // Fine amountu string deyeri kimi goturur
+                .isCollected(bookCheckout.isCollected())
                 .checkoutDate(formatDate(bookCheckout.getCheckoutDate()))
                 .returnDate(formatDate(bookCheckout.getReturnDate()))
                 .build();

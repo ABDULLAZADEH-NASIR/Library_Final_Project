@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,11 +53,19 @@ public class OtpService {
         return false;
     }
 
-    public void sendOtpEmail(String toEmail, int otp) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("OTP Verification");
-        message.setText("Your OTP code is: " + otp + ". It will expire in " + OTP_VALID_MINUTES + " minutes.");
-        mailSender.send(message);
+    public boolean sendOtpEmail(String toEmail, int otp) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("OTP Verification");
+            message.setText(MessageFormat.format("Your OTP code is: {0}. It will expire in {1} minutes.",
+                    String.valueOf(otp), OTP_VALID_MINUTES));
+            mailSender.send(message);
+            return true;
+        } catch (Exception e) {
+            System.err.println(MessageFormat.format("Failed to send OTP email to " +
+                    "{0}: {1}", toEmail, e.getMessage()));
+            return false;
+        }
     }
 }

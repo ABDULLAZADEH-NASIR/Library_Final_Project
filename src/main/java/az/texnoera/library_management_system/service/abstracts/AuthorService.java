@@ -2,22 +2,23 @@ package az.texnoera.library_management_system.service.abstracts;
 
 import az.texnoera.library_management_system.model.request.AuthorRequest;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
+import az.texnoera.library_management_system.model.response.AuthorResponseWithBooks;
 import az.texnoera.library_management_system.model.response.Result;
 
 public interface AuthorService {
     Result<AuthorResponse> getAllAuthors(int page, int size);
 
-    AuthorResponse getAuthorById(Long id);
+    AuthorResponseWithBooks getAuthorById(Long id);
 
-    AuthorResponse getAuthorByAuthorName(String name);
+    AuthorResponseWithBooks getAuthorByAuthorName(String name);
 
     void deleteAuthorById(Long id);
 
-    AuthorResponse createAuthor(AuthorRequest authorRequest);
+    AuthorResponseWithBooks createAuthor(AuthorRequest authorRequest);
 
-    AuthorResponse updateAuthorById(Long id, AuthorRequest authorRequest);
+    AuthorResponseWithBooks updateAuthorById(Long id, AuthorRequest authorRequest);
 
-    AuthorResponse addBookToAuthor(Long authorId, Long bookId);
+    AuthorResponseWithBooks addBookToAuthor(Long authorId, Long bookId);
 
-    AuthorResponse removeBookFromAuthor(Long authorId, Long bookId);
+    AuthorResponseWithBooks removeBookFromAuthor(Long authorId, Long bookId);
 }

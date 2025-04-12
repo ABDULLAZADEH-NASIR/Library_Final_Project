@@ -1,6 +1,7 @@
 package az.texnoera.library_management_system.service.abstracts;
 
 import az.texnoera.library_management_system.model.request.BookCheckoutRequest;
+import az.texnoera.library_management_system.model.request.CheckoutRequestForStatus;
 import az.texnoera.library_management_system.model.response.BookCheckoutResponse;
 import az.texnoera.library_management_system.model.response.Result;
 
@@ -12,4 +13,8 @@ public interface BookCheckoutService {
     BookCheckoutResponse createCheckout(BookCheckoutRequest borrowBookRequest);
 
     void deleteCheckoutByCheckoutId(Long id);
+
+    BookCheckoutResponse isCollectedBook(CheckoutRequestForStatus request);
+
+    void deleteCheckoutForUser(Long bookCheckoutId);
 }

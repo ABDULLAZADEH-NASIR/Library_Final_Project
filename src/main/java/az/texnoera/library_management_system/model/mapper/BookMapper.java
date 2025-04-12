@@ -8,6 +8,7 @@ import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.AuthorResponseForBook;
 import az.texnoera.library_management_system.model.response.BookResponse;
+import az.texnoera.library_management_system.model.response.BookResponseWithAuthors;
 import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
 import org.springframework.http.HttpStatus;
 
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 public interface BookMapper {
 
-    static Book BookRequestToBook(BookRequest bookRequest) {
+    static Book bookRequestToBook(BookRequest bookRequest) {
 
         if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
             throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Categoriya kimi bos falan data gelse iwe duwecek
@@ -45,7 +46,7 @@ public interface BookMapper {
                 .build();
     }
 
-    static BookResponseWithBookCount BookToBookResponseWithBookCount(Book book) {
+    static BookResponseWithBookCount bookToBookResponseWithBookCount(Book book) {
         assert book.getCategory() != null;
         return BookResponseWithBookCount.builder()
                 .id(book.getId())
@@ -64,9 +65,9 @@ public interface BookMapper {
                 .build();
     }
 
-    static BookResponse BookToBookResponse(Book book) {
+    static BookResponseWithAuthors bookToBookResponseWithAuthors(Book book) {
         assert book.getCategory() != null;
-        return BookResponse.builder()
+        return BookResponseWithAuthors.builder()
                 .id(book.getId())
                 .name(book.getName())
                 .bookCategory(book.getCategory().name())
@@ -79,6 +80,18 @@ public interface BookMapper {
                                         .surname(author.getSurname())
                                         .build())
                         .collect(Collectors.toSet()))
+                .build();
+    }
+
+    static BookResponse bookToBookResponse(Book book) {
+        assert book.getCategory() != null;
+        return BookResponse.builder()
+                .id(book.getId())
+                .name(book.getName())
+                .bookCategory(book.getCategory().name())
+                .pages(book.getPages())
+                .availableBookCount(book.getAvialableBooksCount())
+                .year(book.getYear())
                 .build();
     }
 

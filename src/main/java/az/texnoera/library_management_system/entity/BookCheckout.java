@@ -1,6 +1,7 @@
 package az.texnoera.library_management_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,15 +23,18 @@ public class BookCheckout {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Book book;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private User user;
 
+    @Positive
     private BigDecimal fineAmount;
+
+    private boolean isCollected;
 
     @CreationTimestamp
     private LocalDateTime checkoutDate;
@@ -44,7 +48,7 @@ public class BookCheckout {
             this.checkoutDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.checkoutDate.plusMinutes(3); // Saniye olduğu kimi qalir
+            this.returnDate = this.checkoutDate.plusMinutes(10); // Saniye olduğu kimi qalir
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;

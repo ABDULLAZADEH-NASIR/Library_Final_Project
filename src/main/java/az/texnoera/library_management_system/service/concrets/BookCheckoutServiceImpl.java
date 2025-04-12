@@ -7,21 +7,28 @@ import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.BookCheckoutMapper;
 import az.texnoera.library_management_system.model.request.BookCheckoutRequest;
+import az.texnoera.library_management_system.model.request.CheckoutRequestForStatus;
 import az.texnoera.library_management_system.model.response.BookCheckoutResponse;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.repo.BookRepo;
 import az.texnoera.library_management_system.repo.BookCheckoutRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
 import az.texnoera.library_management_system.service.abstracts.BookCheckoutService;
+import az.texnoera.library_management_system.utils.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +36,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
     private final BookCheckoutRepo bookCheckoutRepo;
     private final UserRepo userRepo;
     private final BookRepo bookRepo;
+    private final NotificationService notificationService;
 
     @Override
     public Result<BookCheckoutResponse> getAllCheckouts(int page, int size) {
@@ -48,27 +56,30 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
 
     @Transactional
     @Override
-    public BookCheckoutResponse createCheckout(BookCheckoutRequest borrowBookRequest) {
-        User user = userRepo.findById(borrowBookRequest.getUserId()).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+    public BookCheckoutResponse createCheckout(BookCheckoutRequest bookCheckoutRequest) {
+        User user = userRepo.findById(bookCheckoutRequest.getUserId())
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
-        Book book = bookRepo.findById(borrowBookRequest.getBookId()).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+        Book book = bookRepo.findById(bookCheckoutRequest.getBookId())
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
 
-        if (book.getAvialableBooksCount() > 0) {
-            BookCheckout bookCheckout = new BookCheckout();
-            bookCheckout.setUser(user);
-            bookCheckout.setBook(book);
-            bookCheckoutRepo.save(bookCheckout);
-            book.getBookCheckouts().add(bookCheckout);
-            book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
-            bookRepo.save(book);
-            user.getBookCheckouts().add(bookCheckout);
-            userRepo.save(user);
-            return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
-        } else {
-            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.BOOK_NOT_AVAILABLE);
+        if (book.getAvialableBooksCount() <= 0) {
+            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_AVAILABLE);
         }
+
+        // BookCheckout yaradılır
+        BookCheckout bookCheckout = new BookCheckout();
+        bookCheckout.setUser(user);
+        bookCheckout.setBook(book);
+        bookCheckout.setCheckoutDate(LocalDateTime.now());
+        bookCheckout.setCollected(false); // Əgər default false deyilsə
+        bookCheckoutRepo.save(bookCheckout);
+
+        // Kitab sayı yenilənir
+        book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
+        bookRepo.save(book); // yalnız kitab dəyişibsə lazımdır
+
+        return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
     @Transactional
@@ -95,4 +106,73 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         // Kitab borcunu tam silirik
         bookCheckoutRepo.delete(bookCheckout);
     }
+
+    @Transactional
+    @Override
+    public BookCheckoutResponse isCollectedBook(CheckoutRequestForStatus request) {
+        BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(request.getBookCheckoutId())
+                .orElseThrow(() ->
+                        new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+
+        bookCheckout.setCollected(true);
+        bookCheckoutRepo.save(bookCheckout);
+
+        // Kitab götürüldükdən sonra istifadəçiyə email göndərilir
+        notificationService.sendMailCheckoutNotification(bookCheckout);
+
+        return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCheckoutForUser(Long bookCheckoutId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        BookCheckout checkout = bookCheckoutRepo.findById(bookCheckoutId)
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+
+        if (!checkout.getUser().getEmail().equals(email)) {
+            throw new BasedExceptions(HttpStatus.FORBIDDEN, StatusCode.UNAUTHORIZED_ACTION);
+        }
+
+        if (checkout.isCollected()) {
+            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CHECKOUT_ALREADY_COLLECTED);
+        }
+
+        checkout.getBook().setAvialableBooksCount(
+                checkout.getBook().getAvialableBooksCount() + 1);
+
+        bookCheckoutRepo.delete(checkout);
+    }
+
+    @Scheduled(fixedRate = 60000) // Hər 1 dəqiqədə bir çalışır
+    @Transactional
+    public void removeUncollectedCheckoutsAfter3Minutes() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threeMinutesAgo = now.minusMinutes(5);
+
+        // 5 dəqiqə əvvəl yaradılmış və hələ götürülməmiş bookcheckout-ları tapırıq
+        Set<BookCheckout> expiredCheckouts = bookCheckoutRepo
+                .findExpiredUncollectedWithUserAndBook(threeMinutesAgo);
+
+        for (BookCheckout checkout : expiredCheckouts) {
+            User user = checkout.getUser();
+            Book book = checkout.getBook();
+
+            if (user != null) {
+                user.getBookCheckouts().remove(checkout);
+            }
+
+            if (book != null) {
+                book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
+            }
+
+            bookCheckoutRepo.delete(checkout);
+        }
+    }
 }
+
+
+
+

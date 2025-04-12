@@ -7,6 +7,7 @@ import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.AuthorMapper;
 import az.texnoera.library_management_system.model.request.AuthorRequest;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
+import az.texnoera.library_management_system.model.response.AuthorResponseWithBooks;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.repo.AuthorRepo;
 import az.texnoera.library_management_system.repo.BookRepo;
@@ -38,17 +39,17 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorResponse getAuthorById(Long id) {
+    public AuthorResponseWithBooks getAuthorById(Long id) {
         Author author = authorRepo.findByAuthorId(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
-        return AuthorMapper.authorToAuthorResponse(author);
+        return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
     @Override
-    public AuthorResponse getAuthorByAuthorName(String name) {
+    public AuthorResponseWithBooks getAuthorByAuthorName(String name) {
         Author author = authorRepo.findByAuthorName(name).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
-        return AuthorMapper.authorToAuthorResponse(author);
+        return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
     @Override
@@ -59,24 +60,24 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorResponse createAuthor(AuthorRequest authorRequest) {
+    public AuthorResponseWithBooks createAuthor(AuthorRequest authorRequest) {
         Author author = AuthorMapper.authorRequestToAuthor(authorRequest);
         authorRepo.save(author);
-        return AuthorMapper.authorToAuthorResponse(author);
+        return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
     @Transactional
     @Override
-    public AuthorResponse updateAuthorById(Long id, AuthorRequest authorRequest) {
+    public AuthorResponseWithBooks updateAuthorById(Long id, AuthorRequest authorRequest) {
         Author author = authorRepo.findById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
         AuthorMapper.authorToAuthorResponseUpdate(author, authorRequest);
-        return AuthorMapper.authorToAuthorResponse(authorRepo.save(author));
+        return AuthorMapper.authorToAuthorResponseWithBooks(authorRepo.save(author));
     }
 
     @Transactional
     @Override
-    public AuthorResponse addBookToAuthor(Long authorId, Long bookId) {
+    public AuthorResponseWithBooks addBookToAuthor(Long authorId, Long bookId) {
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
         Book book = bookRepo.findBookById(bookId).orElseThrow(() ->
@@ -85,12 +86,12 @@ public class AuthorServiceImpl implements AuthorService {
         book.getAuthors().add(author);
         authorRepo.save(author);
         bookRepo.save(book);
-        return AuthorMapper.authorToAuthorResponse(author);
+        return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
     @Transactional
     @Override
-    public AuthorResponse removeBookFromAuthor(Long authorId, Long bookId) {
+    public AuthorResponseWithBooks removeBookFromAuthor(Long authorId, Long bookId) {
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND));
         Book book = bookRepo.findBookById(bookId).orElseThrow(() ->
@@ -99,6 +100,6 @@ public class AuthorServiceImpl implements AuthorService {
         book.getAuthors().remove(author);
         authorRepo.save(author);
         bookRepo.save(book);
-        return AuthorMapper.authorToAuthorResponse(author);
+        return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 }
