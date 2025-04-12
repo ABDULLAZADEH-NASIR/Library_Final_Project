@@ -79,9 +79,10 @@ public class AdminController {
     }
 
     @GetMapping("/books/search-book/{id}")
-    public BookResponseWithAuthors getBookById(@PathVariable Long id) {
+    public BookResponseWithBookCount getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
+
 
     @PostMapping("/books/create")
     public BookResponseWithBookCount createBook(@RequestBody BookRequest bookRequest) {

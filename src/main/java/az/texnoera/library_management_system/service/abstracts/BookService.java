@@ -24,5 +24,5 @@ public interface BookService {
 
     Result<BookResponse> getBooksByBookCategory(String category, int page, int size);
 
-    BookResponseWithAuthors getBookById(Long id);
+    BookResponseWithBookCount getBookById(Long id);
 }

@@ -55,10 +55,10 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public BookResponseWithAuthors getBookById(Long id) {
+    public BookResponseWithBookCount getBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
                 new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
-        return BookMapper.bookToBookResponseWithAuthors(book);
+        return BookMapper.bookToBookResponseWithBookCount(book);
     }
 
 
