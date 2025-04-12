@@ -15,7 +15,9 @@ public enum StatusCode {
     CATEGORY_NOT_FOUND(1004, "Category not found"),
     BOOK_NOT_AVAILABLE(1005, "Book not available"),
     CATEGORY_MISSING(1006, "Category missing"),
-    EMAIL_OR_PASSWORD_INCORRECT(1007, "Email or password incorrect");
+    EMAIL_OR_PASSWORD_INCORRECT(1007, "Email or password incorrect"),
+    CHECKOUT_ALREADY_COLLECTED(1008, "Checkout already collected"),
+    UNAUTHORIZED_ACTION(1009, "Unauthorized action");
 
     private final int code;
     private final String message;

@@ -4,6 +4,7 @@ package az.texnoera.library_management_system.model.mapper;
 import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.model.request.AuthorRequest;
 import az.texnoera.library_management_system.model.response.AuthorResponse;
+import az.texnoera.library_management_system.model.response.AuthorResponseWithBooks;
 import az.texnoera.library_management_system.model.response.BookResponseForAuthor;
 
 import java.util.HashSet;
@@ -19,8 +20,8 @@ public interface AuthorMapper {
                 .build();
     }
 
-    static AuthorResponse authorToAuthorResponse(Author author) {
-        return AuthorResponse.builder()
+    static AuthorResponseWithBooks authorToAuthorResponseWithBooks(Author author) {
+        return AuthorResponseWithBooks.builder()
                 .id(author.getId())
                 .name(author.getName())
                 .surname(author.getSurname())
@@ -31,6 +32,16 @@ public interface AuthorMapper {
                                 .build()).collect(Collectors.toSet()))
                 .build();
     }
+
+    static AuthorResponse authorToAuthorResponse(Author author) {
+        return AuthorResponse.builder()
+                .id(author.getId())
+                .name(author.getName())
+                .surname(author.getSurname())
+                .build();
+    }
+
+
 
     static void authorToAuthorResponseUpdate(Author author, AuthorRequest authorRequest) {
         author.setName(authorRequest.getName());

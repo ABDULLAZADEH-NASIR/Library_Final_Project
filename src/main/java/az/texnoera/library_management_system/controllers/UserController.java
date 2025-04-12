@@ -35,4 +35,10 @@ public class UserController {
     public UserResponseWithBookCheckout getCurrentUser() {
         return userService.getCurrentUser();
     }
+
+    @DeleteMapping("/bookCheckouts/delete-for-user/{bookCheckoutId}")
+    public void deleteBookInCheckout(@PathVariable Long bookCheckoutId) {
+        bookCheckoutService.deleteCheckoutForUser(bookCheckoutId);
+    }
+
 }

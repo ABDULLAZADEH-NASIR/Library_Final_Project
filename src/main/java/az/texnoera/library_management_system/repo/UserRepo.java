@@ -25,11 +25,21 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.bookCheckouts WHERE u.FIN=:fin")
     Optional<User> findUserByFIN(String fin);
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
     List<User> findAllUsersWithBorrowedBooks();
 
-    @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles JOIN u.bookCheckouts WHERE u.email = :email")
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.roles  WHERE u.email = :email")
     Optional<User> findByEmail(@NotNull String email);
+
+    @Query("""
+    SELECT DISTINCT u FROM User u\s
+    LEFT JOIN FETCH u.roles\s
+    LEFT JOIN FETCH u.bookCheckouts bc\s
+    LEFT JOIN FETCH bc.book b\s
+    LEFT JOIN FETCH b.authors\s
+    WHERE u.email = :email
+""")
+    Optional<User> findUserByEmail(String email);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email")
     boolean existsByEmail(String email);

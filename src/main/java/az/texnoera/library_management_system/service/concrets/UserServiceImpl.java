@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseWithBookCheckout getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        User user = userRepo.findByEmail(email)
+        User user = userRepo.findUserByEmail(email)
                 .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
         return UserMapper.userToUserResponseWithCheckout(user);
     }

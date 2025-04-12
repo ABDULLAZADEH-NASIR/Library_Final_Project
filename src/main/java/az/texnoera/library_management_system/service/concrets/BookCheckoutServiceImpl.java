@@ -21,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,15 +72,12 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         bookCheckout.setUser(user);
         bookCheckout.setBook(book);
         bookCheckout.setCheckoutDate(LocalDateTime.now());
+        bookCheckout.setCollected(false); // Əgər default false deyilsə
         bookCheckoutRepo.save(bookCheckout);
 
-        // Kitab və istifadəçi obyektləri yenilənir
-        book.getBookCheckouts().add(bookCheckout);
+        // Kitab sayı yenilənir
         book.setAvialableBooksCount(book.getAvialableBooksCount() - 1);
-        bookRepo.save(book);
-
-        user.getBookCheckouts().add(bookCheckout);
-        userRepo.save(user);
+        bookRepo.save(book); // yalnız kitab dəyişibsə lazımdır
 
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
@@ -122,6 +121,29 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         notificationService.sendMailCheckoutNotification(bookCheckout);
 
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
+    }
+
+    @Transactional
+    @Override
+    public void deleteCheckoutForUser(Long bookCheckoutId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        BookCheckout checkout = bookCheckoutRepo.findById(bookCheckoutId)
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+
+        if (!checkout.getUser().getEmail().equals(email)) {
+            throw new BasedExceptions(HttpStatus.FORBIDDEN, StatusCode.UNAUTHORIZED_ACTION);
+        }
+
+        if (checkout.isCollected()) {
+            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CHECKOUT_ALREADY_COLLECTED);
+        }
+
+        checkout.getBook().setAvialableBooksCount(
+                checkout.getBook().getAvialableBooksCount() + 1);
+
+        bookCheckoutRepo.delete(checkout);
     }
 
     @Scheduled(fixedRate = 60000) // Hər 1 dəqiqədə bir çalışır

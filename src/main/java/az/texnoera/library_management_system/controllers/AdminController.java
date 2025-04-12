@@ -20,7 +20,7 @@ public class AdminController {
 
 
     @GetMapping("/authors/search/{id}")
-    public AuthorResponse getAuthorById(@PathVariable Long id) {
+    public AuthorResponseWithBooks getAuthorById(@PathVariable Long id) {
         return authorService.getAuthorById(id);
     }
 
@@ -30,28 +30,28 @@ public class AdminController {
     }
 
     @PostMapping("/authors/create")
-    public AuthorResponse addAuthor(@RequestBody AuthorRequest authorRequest) {
+    public AuthorResponseWithBooks addAuthor(@RequestBody AuthorRequest authorRequest) {
         return authorService.createAuthor(authorRequest);
     }
 
     @PutMapping("/authors/update/{id}")
-    public AuthorResponse updateAuthorById(@PathVariable Long id,
-                                           @RequestBody AuthorRequest authorRequest) {
+    public AuthorResponseWithBooks updateAuthorById(@PathVariable Long id,
+                                                    @RequestBody AuthorRequest authorRequest) {
         return authorService.updateAuthorById(id, authorRequest);
 
     }
 
     @PostMapping("/authors/{authorId}/add-book/{bookId}")
-    public AuthorResponse addBookToAuthor(@PathVariable Long authorId,
-                                          @PathVariable Long bookId) {
+    public AuthorResponseWithBooks addBookToAuthor(@PathVariable Long authorId,
+                                                   @PathVariable Long bookId) {
 
         return authorService.addBookToAuthor(authorId, bookId);
 
     }
 
     @DeleteMapping("/authors/{authorId}/remove-book/{bookId}")
-    public AuthorResponse removeBookFromAuthor(@PathVariable Long authorId,
-                                               @PathVariable Long bookId) {
+    public AuthorResponseWithBooks removeBookFromAuthor(@PathVariable Long authorId,
+                                                        @PathVariable Long bookId) {
 
         return authorService.removeBookFromAuthor(authorId, bookId);
 
@@ -79,7 +79,7 @@ public class AdminController {
     }
 
     @GetMapping("/books/search-book/{id}")
-    public BookResponse getBookById(@PathVariable Long id) {
+    public BookResponseWithAuthors getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 

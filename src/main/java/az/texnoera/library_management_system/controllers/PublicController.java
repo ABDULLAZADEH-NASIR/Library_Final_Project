@@ -1,9 +1,6 @@
 package az.texnoera.library_management_system.controllers;
 
-import az.texnoera.library_management_system.model.request.UserRequest;
-import az.texnoera.library_management_system.model.response.AuthorResponse;
-import az.texnoera.library_management_system.model.response.BookResponse;
-import az.texnoera.library_management_system.model.response.Result;
+import az.texnoera.library_management_system.model.response.*;
 import az.texnoera.library_management_system.service.concrets.AuthorServiceImpl;
 import az.texnoera.library_management_system.service.concrets.BookServiceImpl;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
@@ -26,7 +23,7 @@ public class PublicController {
     }
 
     @GetMapping("/authors/search-by-name/")
-    public AuthorResponse getAuthorByName(@RequestParam String name) {
+    public AuthorResponseWithBooks getAuthorByName(@RequestParam String name) {
         return authorService.getAuthorByAuthorName(name);
     }
 
@@ -39,13 +36,13 @@ public class PublicController {
 
     @GetMapping("/books/search-by-bookCategory/{category}")
     public Result<BookResponse> getBooksByBookCategory(@PathVariable String category,
-                                                       @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size) {
         return bookService.getBooksByBookCategory(category, page, size);
     }
 
     @GetMapping("/books/search-by-name/{bookName}")
-    public BookResponse getBookByName(@PathVariable String bookName) {
+    public BookResponseWithAuthors getBookByName(@PathVariable String bookName) {
         return bookService.getBookByBookName(bookName);
 
     }

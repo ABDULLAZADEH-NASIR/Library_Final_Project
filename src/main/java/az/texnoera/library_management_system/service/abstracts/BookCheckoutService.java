@@ -15,4 +15,6 @@ public interface BookCheckoutService {
     void deleteCheckoutByCheckoutId(Long id);
 
     BookCheckoutResponse isCollectedBook(CheckoutRequestForStatus request);
+
+    void deleteCheckoutForUser(Long bookCheckoutId);
 }
