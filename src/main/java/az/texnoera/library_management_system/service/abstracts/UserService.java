@@ -25,4 +25,6 @@ public interface UserService {
     UserResponseWithBookCheckout getUserByFin(String fin);
 
     String login(LoginRequest loginRequest);
+
+    UserResponseWithBookCheckout getCurrentUser();
 }

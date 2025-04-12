@@ -24,6 +24,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,13 +91,22 @@ public class UserServiceImpl implements UserService {
 
     public String login(LoginRequest loginRequest) {
         User user = userRepo.findByEmail(loginRequest.getMail())
-                .orElseThrow(() -> new RuntimeException(String.format("User not found with mail: %s", loginRequest.getMail())));
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Email or password incorrect");
+            throw new BasedExceptions(HttpStatus.UNAUTHORIZED,StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
         }
         return jwtUtils.generateJwtToken(user.getUsername(),
                 user.getRoles().stream().map(Role::getName).toList());
+    }
+
+    @Override
+    public UserResponseWithBookCheckout getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+        return UserMapper.userToUserResponseWithCheckout(user);
     }
 
     @Override

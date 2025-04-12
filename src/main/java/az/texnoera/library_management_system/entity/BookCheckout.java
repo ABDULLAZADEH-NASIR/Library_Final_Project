@@ -1,6 +1,7 @@
 package az.texnoera.library_management_system.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -30,6 +31,7 @@ public class BookCheckout {
     @JoinColumn
     private User user;
 
+    @Positive
     private BigDecimal fineAmount;
 
     private boolean isCollected;

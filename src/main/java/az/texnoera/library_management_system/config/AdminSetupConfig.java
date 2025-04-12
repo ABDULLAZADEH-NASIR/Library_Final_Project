@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -29,28 +30,28 @@ public class AdminSetupConfig {
     @PostConstruct
     @Transactional
     public void init() {
-        // Admin rolunun olub-olmaması yoxlanılır
+        // "ROLE_ADMIN" rolunun verilənlər bazasında olub-olmaması yoxlanılır
         if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
             Role adminRole = new Role();
             adminRole.setName("ROLE_ADMIN");
-            roleRepository.save(adminRole);  // Admin rolunu əlavə edirik
+            roleRepository.save(adminRole);  // Admin rolunu verilənlər bazasına əlavə edirik
+            System.out.println("Admin rolu uğurla yaradıldı.");
         }
 
-        // Admin istifadəçisi veritabanında yoxlanılır
-        if (userRepository.findByEmail("abdullayevnasir6@gmail.com").isEmpty()) {
+        // Admin istifadəçisinin verilənlər bazasında olub-olmaması yoxlanılır
+        if (!userRepository.existsByEmail("abdullayevnasir6@gmail.com")) {
             User admin = new User();
             admin.setName("Nasir");
             admin.setSurname("Abdullayev");
             admin.setFIN("5UY2TS6");
             admin.setEmail("abdullayevnasir6@gmail.com");
-            admin.setPassword(passwordEncoder.encode("4145"));
-            // Admin rolunu əlavə edirik
+            admin.setPassword(passwordEncoder.encode("4145"));  // Güclü şifrə istifadə etməyi unutmayın
+            // Admin rolunu istifadəçiyə əlavə edirik
             admin.setRoles(Set.of(roleRepository.findByName("ROLE_ADMIN").orElseThrow(() ->
-                    new RuntimeException("No role found"))));
+                    new RuntimeException("Admin rolu tapılmadı"))));
 
-            // Admin istifadəçisini əlavə edirik
+            // Admin istifadəçisini verilənlər bazasına əlavə edirik
             userRepository.save(admin);
-            System.out.println("Admin user created successfully.");
         }
     }
 }

@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -37,9 +38,8 @@ public class User implements UserDetails {
     @NotNull
     @Column(unique = true)
     private String email;
-
+    @Positive
     private BigDecimal totalFineAmount;
-
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
