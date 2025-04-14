@@ -28,6 +28,7 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private final BookRepo bookRepo;
 
+    // Yeni book yaradır
     @Transactional
     @Override
     public BookResponseWithBookCount createBook(BookRequest bookRequest) {
@@ -36,6 +37,7 @@ public class BookServiceImpl implements BookService {
         return BookMapper.bookToBookResponseWithBookCount(book);
     }
 
+    // Bütün bookları gətirir
     @Override
     public Result<BookResponse> getAllBooks(int page, int size) {
         Pageable page1 = PageRequest.of(page, size);
@@ -46,6 +48,7 @@ public class BookServiceImpl implements BookService {
         return new Result<>(bookResponses, page, size, books.getTotalPages());
     }
 
+    // Book id ilə və book sayı da göstərilməklə göstərilir
     @Override
     public BookResponseWithBookCount getBookWithCountById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
@@ -54,6 +57,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    // Book id ilə göstərir
     @Override
     public BookResponseWithBookCount getBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
@@ -62,6 +66,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    // Book adına görə gostərir
     @Override
     public BookResponseWithAuthors getBookByBookName(String bookName) {
         Book book = bookRepo.findBookByName(bookName).orElseThrow(() ->
@@ -70,6 +75,7 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    // Book id ilə silir
     @Override
     public void deleteBookById(Long id) {
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
@@ -77,6 +83,7 @@ public class BookServiceImpl implements BookService {
         bookRepo.delete(book);
     }
 
+    // Book update edir
     @Transactional
     @Override
     public BookResponseWithBookCount updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
@@ -86,16 +93,14 @@ public class BookServiceImpl implements BookService {
         return BookMapper.bookToBookResponseWithBookCount(bookRepo.save(book));
     }
 
+    // Kateqoriyaya görə bookları göstərir
     @Override
     public Result<BookResponse> getBooksByBookCategory(String category, int page, int size) {
         String categoryFilter = category.toUpperCase();
         Pageable page3 = PageRequest.of(page, size);
         Page<Book> books = bookRepo.findABookByCategory(BookCategory.valueOf(categoryFilter), page3);
-
         List<BookResponse> bookResponses = books.stream()
                 .map(BookMapper::bookToBookResponse).toList();
         return new Result<>(bookResponses, page, size, books.getTotalPages());
     }
-
-
 }

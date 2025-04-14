@@ -34,6 +34,7 @@ public class SecurityConfig {
     }
 
 
+    // Endpoint nəzarəti edir (Filterləyir)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -51,7 +52,6 @@ public class SecurityConfig {
                 );
 
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

@@ -44,15 +44,17 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    // User Roluna görə axtarıs edilən zaman Securty-də mail-nə görə axtarılacaq
     @Override
     public String getUsername() {
         return this.email;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<BookCheckout> bookCheckouts = new HashSet<>();
 
 
+    // Userin ümumi borcu əgər null dəyərindədirsə bu zaman 0 dəyər alacaq
     @PrePersist
     @PreUpdate
     public void ensureTotalDebtNotNull() {
@@ -61,7 +63,7 @@ public class User implements UserDetails {
         }
     }
 
-    // Total borcu hesablayıb `totalDebt`-ə yazırıq
+    // Total borcu hesablayıb totalDebt-ə yazır
     public void updateTotalDebt() {
         BigDecimal totalDebt = BigDecimal.ZERO;
         for (BookCheckout bookCheckout : bookCheckouts) {
@@ -70,13 +72,14 @@ public class User implements UserDetails {
         this.totalFineAmount = totalDebt;
     }
 
+    // Bu metod Userin borcunu 0.00 formatda göstərəcək
     @JsonProperty("totalDebt")
     public String getFormattedTotalDebt() {
         return totalFineAmount != null ? String.format("%.2f AZN",
                 totalFineAmount.doubleValue()) : "0.00 AZN";
     }
 
-
+    // Userin rolunu Spring Securty-ə təqdim list halında təqdim edir
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role ->

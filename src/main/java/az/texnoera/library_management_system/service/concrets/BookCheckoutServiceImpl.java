@@ -38,6 +38,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
     private final BookRepo bookRepo;
     private final NotificationService notificationService;
 
+    // Bütün bookCheckoutları göstərir
     @Override
     public Result<BookCheckoutResponse> getAllCheckouts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -47,6 +48,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         return new Result<>(borrowBookResponses, page, size, bookCheckouts.getTotalPages());
     }
 
+    // BookCheckout id ilə göstərir
     @Override
     public BookCheckoutResponse getCheckoutById(Long id) {
         BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(id).orElseThrow(() ->
@@ -54,6 +56,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
+    // User öz BookCheckout-un yaradır...Yəni istədiyi booku seçir və öz rezervinə əlavə edir
     @Transactional
     @Override
     public BookCheckoutResponse createCheckout(BookCheckoutRequest bookCheckoutRequest) {
@@ -82,6 +85,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
+    // BookCheckoutu id ilə silir
     @Transactional
     @Override
     public void deleteCheckoutByCheckoutId(Long id) {
@@ -107,6 +111,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         bookCheckoutRepo.delete(bookCheckout);
     }
 
+    // BookCheckoutda olan statusu deyisir.Yeni booku gelib fiziki olaraq goturen zaman.
     @Transactional
     @Override
     public BookCheckoutResponse isCollectedBook(CheckoutRequestForStatus request) {
@@ -123,6 +128,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
+    // User öz BookCheckout-dan secdiyi booku əgər fiziki olaraq götürməyibsə silib cixara bilir
     @Transactional
     @Override
     public void deleteCheckoutForUser(Long bookCheckoutId) {
@@ -146,6 +152,8 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         bookCheckoutRepo.delete(checkout);
     }
 
+    // User əgər 3 dəqiqə ərzində kitabı fiziki olaraq götürmədiyi
+    // halda həmin kitabı rezervi hər dəqiqə silinir
     @Scheduled(fixedRate = 60000) // Hər 1 dəqiqədə bir çalışır
     @Transactional
     public void removeUncollectedCheckoutsAfter3Minutes() {

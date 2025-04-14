@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
@@ -32,13 +31,13 @@ public interface UserRepo extends JpaRepository<User, Long> {
     Optional<User> findByEmail(@NotNull String email);
 
     @Query("""
-    SELECT DISTINCT u FROM User u\s
-    LEFT JOIN FETCH u.roles\s
-    LEFT JOIN FETCH u.bookCheckouts bc\s
-    LEFT JOIN FETCH bc.book b\s
-    LEFT JOIN FETCH b.authors\s
-    WHERE u.email = :email
-""")
+                SELECT DISTINCT u FROM User u\s
+                LEFT JOIN FETCH u.roles\s
+                LEFT JOIN FETCH u.bookCheckouts bc\s
+                LEFT JOIN FETCH bc.book b\s
+                LEFT JOIN FETCH b.authors\s
+                WHERE u.email = :email
+            """)
     Optional<User> findUserByEmail(String email);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email")

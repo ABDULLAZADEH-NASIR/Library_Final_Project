@@ -26,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
     private User tempUser;
 
+    // Yeni useri registr edir
     @Transactional
     @Override
     public String register(UserRequest userRequest) {
@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    // Userin daxil etdiyi OTP kod eger düzdürsə yalniz o zaman Useri DB-ə save edir
     @Override
     public String verifyOtp(int otp) {
         if (tempUser == null) {
@@ -89,17 +90,19 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    // Save olunan Userin Login olur ve bu zaman roluna görə JWT alır
     public String login(LoginRequest loginRequest) {
         User user = userRepo.findByEmail(loginRequest.getMail())
                 .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new BasedExceptions(HttpStatus.UNAUTHORIZED,StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
+            throw new BasedExceptions(HttpStatus.UNAUTHORIZED, StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
         }
         return jwtUtils.generateJwtToken(user.getUsername(),
                 user.getRoles().stream().map(Role::getName).toList());
     }
 
+    // User öz profilinə baxır
     @Override
     public UserResponseWithBookCheckout getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -109,6 +112,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.userToUserResponseWithCheckout(user);
     }
 
+    // Useri id ilə gətirir
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepo.findById(id).orElseThrow(() ->
@@ -116,6 +120,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.userToUserResponse(user);
     }
 
+    // Useri oz BookCheckoutları ilə id-nə görə göstərir
     @Override
     public UserResponseWithBookCheckout getUserWithCheckoutsById(Long id) {
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() ->
@@ -123,6 +128,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.userToUserResponseWithCheckout(user);
     }
 
+    // Bütün userləri göstərir
     @Override
     public Result<UserResponse> getAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -132,6 +138,7 @@ public class UserServiceImpl implements UserService {
         return new Result<>(userList, page, size, users.getTotalPages());
     }
 
+    // Useri id ilə silir
     @Override
     public void deleteUserById(Long id) {
         User user = userRepo.findById(id).orElseThrow(() ->
@@ -139,6 +146,7 @@ public class UserServiceImpl implements UserService {
         userRepo.delete(user);
     }
 
+    // Useri id ilə update edir
     @Transactional
     @Override
     public UserResponse updateUserById(Long id, UserRequestForUpdate userRequest) {
@@ -149,6 +157,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    // Useri FİN ilə göstərir
     @Override
     public UserResponseWithBookCheckout getUserByFin(String fin) {
         User user = userRepo.findUserByFIN(fin).orElseThrow(() ->
@@ -157,6 +166,9 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    // Qaytarılma vaxtı keçən hər dəqiqəyə görə 1 AZN cərimə hesablanır.
+    // Yəni hər qaytarılması gecikən kitabın borcu BookCheckout yazılır və
+    // həmçinin Userin ümumi borcu hesablanır Userin Emailinə borc bildirişi göndərilir
     @Transactional
     @Scheduled(cron = "0 */5 * * * ?")
     public void sendScheduledDebtNotifications() {
@@ -167,7 +179,6 @@ public class UserServiceImpl implements UserService {
             for (BookCheckout bookCheckout : user.getBookCheckouts()) {
                 bookCheckout.calculateFine(); // Kitabin borcunu yenileyir
             }
-
             user.updateTotalDebt(); // Umumi borcu yenileyir
             userRepo.save(user); // Yenilenmiw borcu DB-e yazir
 

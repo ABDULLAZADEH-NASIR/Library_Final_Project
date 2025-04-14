@@ -24,6 +24,7 @@ public interface BookCheckoutMapper {
                 .build();
     }
 
+    // Date den nanosaniyələri çixarır ve istədiyim formatı təyin edir
     private static String formatDate(LocalDateTime dateTime) {
         return dateTime.truncatedTo(ChronoUnit.SECONDS).toString().replace("T", " ");
     }

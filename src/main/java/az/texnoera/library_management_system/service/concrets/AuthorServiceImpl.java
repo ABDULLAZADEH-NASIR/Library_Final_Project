@@ -28,6 +28,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepo authorRepo;
     private final BookRepo bookRepo;
 
+    // Bütün authorları göstərir
     @Override
     public Result<AuthorResponse> getAllAuthors(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -38,6 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
         return new Result<>(authorResponses, page, size, authors.getTotalPages());
     }
 
+    // Authoru id ilə gətirir
     @Override
     public AuthorResponseWithBooks getAuthorById(Long id) {
         Author author = authorRepo.findByAuthorId(id).orElseThrow(() ->
@@ -45,6 +47,7 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
+    // Authoru adı ilə axtarır
     @Override
     public AuthorResponseWithBooks getAuthorByAuthorName(String name) {
         Author author = authorRepo.findByAuthorName(name).orElseThrow(() ->
@@ -52,6 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
+    // Authoru id ilə silir
     @Override
     public void deleteAuthorById(Long id) {
         Author author = authorRepo.findByAuthorId(id).orElseThrow(() ->
@@ -59,6 +63,7 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepo.delete(author);
     }
 
+    // Yeni author yaradır
     @Override
     public AuthorResponseWithBooks createAuthor(AuthorRequest authorRequest) {
         Author author = AuthorMapper.authorRequestToAuthor(authorRequest);
@@ -66,6 +71,7 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
+    // Authoru id ilə update edir
     @Transactional
     @Override
     public AuthorResponseWithBooks updateAuthorById(Long id, AuthorRequest authorRequest) {
@@ -75,6 +81,7 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponseWithBooks(authorRepo.save(author));
     }
 
+    // Authora id ilə kitabını əlavə edir
     @Transactional
     @Override
     public AuthorResponseWithBooks addBookToAuthor(Long authorId, Long bookId) {
@@ -89,6 +96,7 @@ public class AuthorServiceImpl implements AuthorService {
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
     }
 
+    // Authorun kitabını id ilə onun adından silir
     @Transactional
     @Override
     public AuthorResponseWithBooks removeBookFromAuthor(Long authorId, Long bookId) {

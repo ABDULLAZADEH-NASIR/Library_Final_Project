@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -22,6 +21,7 @@ public class OtpService {
     private final Map<String, Integer> otpStore = new HashMap<>();
     private final Map<String, LocalDateTime> otpExpirationStore = new HashMap<>();
 
+    // 4 rəqəmli OTP kod yaradır
     public int generateOtp() {
         Random random = new Random();
         // 4 reqemli OTP kodu (1000-den 9999-a kimi 4 reqemli OTP yaradir)
@@ -29,11 +29,14 @@ public class OtpService {
         return otp;
     }
 
+    // OTP kodu save edir həmçinin map ilə userin emaili və
+    // OTP kodun yaranma  vaxtı save edilir.(5 dəqiqə kimi təyin etmişəm)
     public void saveOtp(String email, int otp) {
         otpStore.put(email, otp);
         otpExpirationStore.put(email, LocalDateTime.now().plusMinutes(OTP_VALID_MINUTES));
     }
 
+    // OTP kodun doğru olub olmamağı yoxlanılır
     public boolean validateOtp(String email, int otp) {
         Integer storedOtp = otpStore.get(email);
         LocalDateTime expirationTime = otpExpirationStore.get(email);
@@ -49,10 +52,10 @@ public class OtpService {
             otpExpirationStore.remove(email);
             return true;
         }
-
         return false;
     }
 
+    // Emailin duzgun olub olmadığını yoxlamaq üçün OTP kod gönderilir
     public boolean sendOtpEmail(String toEmail, int otp) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();

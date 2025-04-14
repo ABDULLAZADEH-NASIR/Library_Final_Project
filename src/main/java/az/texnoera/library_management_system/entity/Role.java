@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+// Userin rolları üçün class
 @Table(name = "roles")
 public class Role {
     @Id

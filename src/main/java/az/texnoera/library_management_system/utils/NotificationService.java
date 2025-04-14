@@ -3,7 +3,6 @@ package az.texnoera.library_management_system.utils;
 import az.texnoera.library_management_system.entity.Book;
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
-import az.texnoera.library_management_system.repo.BookRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,6 +18,8 @@ public class NotificationService {
     private final JavaMailSender mailSender;
     private final UserRepo userRepo;
 
+    // User kitabı fiziki olaraq götürdüyü zaman userin
+    // emailinə kitabın götürülməsi haqqda bildiriş göndərilir
     public void sendMailCheckoutNotification(BookCheckout checkout) {
         User user = checkout.getUser();
         Book book = checkout.getBook();
@@ -45,11 +46,12 @@ public class NotificationService {
     }
 
 
+    // Userin email-ə borc bildirişi göndərilir
     public void sendMailDebtMessage(User user) {
         user.updateTotalDebt(); // Borcu yenileyir
         userRepo.save(user); // Yenilenmis borcu DB yazir
 
-        if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) { // Borc varsa email göndər
+        if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) { // Borc varsa email-ə göndərir
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Library Debt Notification");

@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @AllArgsConstructor
 @ToString
+// Book kateqoriyaları
 public enum BookCategory {
     DETECTIVE,
     SCIENCE,

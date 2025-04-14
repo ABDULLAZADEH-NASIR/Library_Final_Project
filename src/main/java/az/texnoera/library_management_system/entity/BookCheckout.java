@@ -42,20 +42,21 @@ public class BookCheckout {
     private LocalDateTime returnDate;
 
 
+    // BookCheckout yaranan zaman book qaytarılma vaxtı set olunur(Test üçün qaytarılma vaxtını 10 dəqiqə etmişəm)
     @PrePersist
     public void setDatesAutomatically() {
         if (this.checkoutDate == null) {
             this.checkoutDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.checkoutDate.plusMinutes(10); // Saniye olduğu kimi qalir
+            this.returnDate = this.checkoutDate.plusMinutes(10);
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;
         }
-
     }
 
+    // Hər bildiriş göndərilmə vaxtı BookCheckoutdakı Book-a görə olan borcu update olur (Gecikməyə gorə 1 AZN hər dəqiqəsinə görə elavə olunacaq)
     @PreUpdate
     public void calculateFine() {
         if (LocalDateTime.now().isAfter(returnDate)) {
@@ -69,7 +70,7 @@ public class BookCheckout {
 
         // User-in borcunu yenileyir
         if (this.user != null) {
-            this.user.updateTotalDebt(); // User-in umumi borcunu yenileyir
+            this.user.updateTotalDebt();
         }
     }
 
