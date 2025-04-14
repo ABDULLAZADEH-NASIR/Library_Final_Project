@@ -17,14 +17,14 @@ public class OtpService {
     private final JavaMailSender mailSender;
     private static final int OTP_VALID_MINUTES = 5;
 
-    // Yaddaşda OTP-leri saxlayir Integer kimi..
+    // Yaddaşda OTP-ləri saxlayır Integer kimi..
     private final Map<String, Integer> otpStore = new HashMap<>();
     private final Map<String, LocalDateTime> otpExpirationStore = new HashMap<>();
 
     // 4 rəqəmli OTP kod yaradır
     public int generateOtp() {
         Random random = new Random();
-        // 4 reqemli OTP kodu (1000-den 9999-a kimi 4 reqemli OTP yaradir)
+        // 4 rəqəmli OTP kodu (1000-dən 9999-a kimi 4 reqemli OTP yaradır)
         int otp = 1000 + random.nextInt(9000);
         return otp;
     }
