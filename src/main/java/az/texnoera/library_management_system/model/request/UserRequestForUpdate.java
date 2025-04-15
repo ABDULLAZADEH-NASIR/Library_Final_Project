@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class UserRequestForUpdate {
     private String name;
     private String surname;
-
 }

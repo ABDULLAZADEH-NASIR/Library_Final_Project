@@ -15,6 +15,4 @@ public class BookRequestForBookUpdate {
     private int year;
     private int pages;
     private Long totalBooksCount;
-
-
 }

@@ -168,4 +168,11 @@ public class AdminController {
         log.info("Admin requested user by FIN: {}", fin);
         return userService.getUserByFin(fin);
     }
+
+    // Book id ilə və book sayı da göstərilməklə göstərilir
+    @GetMapping("/book/search-with-count/{id}")
+    public BookResponseWithBookCount getBookWithCountById(@PathVariable Long id) {
+        log.info("GET /v1/user/book/search-with-count/{} called", id);
+        return bookService.getBookWithCountById(id);
+    }
 }

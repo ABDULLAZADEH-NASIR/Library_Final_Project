@@ -33,13 +33,6 @@ public class UserController {
         return bookCheckoutService.createCheckout(bookCheckoutRequest);
     }
 
-    // Book id ilə və book sayı da göstərilməklə göstərilir
-    @GetMapping("/book/search-with-count/{id}")
-    public BookResponseWithBookCount getBookWithCountById(@PathVariable Long id) {
-        logger.info("GET /v1/user/book/search-with-count/{} called", id);
-        return bookService.getBookWithCountById(id);
-    }
-
     // User öz profilinə baxır
     @GetMapping("/me")
     public UserResponseWithBookCheckout getCurrentUser() {
