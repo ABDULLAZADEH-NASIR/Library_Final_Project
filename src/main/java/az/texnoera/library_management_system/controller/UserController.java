@@ -8,6 +8,8 @@ import az.texnoera.library_management_system.service.concrets.BookCheckoutServic
 import az.texnoera.library_management_system.service.concrets.BookServiceImpl;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,33 +17,40 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/user")
 // Burda yalnız userin yeni istifadəçinin istifade ede biləcəyi APİ-lar var
 public class UserController {
+
     private final BookCheckoutServiceImpl bookCheckoutService;
     private final BookServiceImpl bookService;
     private final UserServiceImpl userService;
-
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // User öz BookCheckout-un yaradır...Yəni istədiyi booku seçir və öz rezervinə əlavə edir
     @PostMapping("/bookCheckouts/create-add-book")
     public BookCheckoutResponse addBookInCheckout(@RequestBody BookCheckoutRequest bookCheckoutRequest) {
+        logger.info("POST /v1/user/bookCheckouts/create-add-book called with bookId={}, " +
+                        "userId={}",
+                bookCheckoutRequest.getBookId(),
+                bookCheckoutRequest.getUserId());
         return bookCheckoutService.createCheckout(bookCheckoutRequest);
     }
-
 
     // Book id ilə və book sayı da göstərilməklə göstərilir
     @GetMapping("/book/search-with-count/{id}")
     public BookResponseWithBookCount getBookWithCountById(@PathVariable Long id) {
+        logger.info("GET /v1/user/book/search-with-count/{} called", id);
         return bookService.getBookWithCountById(id);
     }
 
     // User öz profilinə baxır
     @GetMapping("/me")
     public UserResponseWithBookCheckout getCurrentUser() {
+        logger.info("GET /v1/user/me called - fetching current user's profile");
         return userService.getCurrentUser();
     }
 
     // User öz BookCheckout-dan secdiyi booku əgər fiziki olaraq götürməyibsə silib cixara bilir
     @DeleteMapping("/bookCheckouts/delete-for-user/{bookCheckoutId}")
     public void deleteBookInCheckout(@PathVariable Long bookCheckoutId) {
+        logger.info("DELETE /v1/user/bookCheckouts/delete-for-user/{} called", bookCheckoutId);
         bookCheckoutService.deleteCheckoutForUser(bookCheckoutId);
     }
 }
