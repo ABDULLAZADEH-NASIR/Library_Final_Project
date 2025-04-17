@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public String register(UserRequest userRequest) {
-        log.info("Register method called with email: {}", userRequest.getEmail());
+        log.info("Register method called with email: {}", userRequest.getMail());
         User user = UserMapper.userRequestToUser(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
         user.setRoles(Set.of(role));
         int otp = otpService.generateOtp();
-        otpService.saveOtp(userRequest.getEmail(), otp);
+        otpService.saveOtp(userRequest.getMail(), otp);
         boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
         this.tempUser = user;
 

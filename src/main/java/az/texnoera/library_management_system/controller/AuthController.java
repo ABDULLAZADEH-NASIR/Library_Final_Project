@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.controller;
 import az.texnoera.library_management_system.model.request.LoginRequest;
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,9 @@ public class AuthController {
 
     // Yeni useri registr edir
     @PostMapping("/register")
-    public String register(@RequestBody UserRequest userRequest) {
-        log.info("Yeni istifadəçi qeydiyyatı: ad={}, soyad={}, email={}", userRequest.getName(), userRequest.getSurname(), userRequest.getEmail());
+    public String register(@RequestBody @Valid UserRequest userRequest) {
+        log.info("Yeni istifadəçi qeydiyyatı: ad={}, soyad={}, email={}", userRequest.getName(),
+                userRequest.getSurname(), userRequest.getMail());
         return userService.register(userRequest);
     }
 
@@ -31,8 +33,9 @@ public class AuthController {
 
     // Save olunan Userin Login olur ve bu zaman roluna görə JWT alır
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
-        log.info("İstifadəçi login tələbi: email={}, password={}", loginRequest.getMail(), loginRequest.getPassword());
+    public String login(@RequestBody @Valid LoginRequest loginRequest) {
+        log.info("İstifadəçi login tələbi: email={}, password={}", loginRequest.getMail(),
+                loginRequest.getPassword());
         return userService.login(loginRequest);
     }
 }

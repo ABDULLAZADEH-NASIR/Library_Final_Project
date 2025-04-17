@@ -6,6 +6,7 @@ import az.texnoera.library_management_system.service.concrets.AuthorServiceImpl;
 import az.texnoera.library_management_system.service.concrets.BookCheckoutServiceImpl;
 import az.texnoera.library_management_system.service.concrets.BookServiceImpl;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class AdminController {
 
     // Yeni author yaradır
     @PostMapping("/authors/create")
-    public AuthorResponseWithBooks addAuthor(@RequestBody AuthorRequest authorRequest) {
+    public AuthorResponseWithBooks addAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
         log.info("Admin is creating a new author: {}", authorRequest.getName());
         return authorService.createAuthor(authorRequest);
     }
@@ -46,7 +47,7 @@ public class AdminController {
     // Authoru id ilə update edir
     @PutMapping("/authors/update/{id}")
     public AuthorResponseWithBooks updateAuthorById(@PathVariable Long id,
-                                                    @RequestBody AuthorRequest authorRequest) {
+                                                    @RequestBody @Valid AuthorRequest authorRequest) {
         log.info("Admin is updating author with ID: {}", id);
         return authorService.updateAuthorById(id, authorRequest);
     }
@@ -84,7 +85,7 @@ public class AdminController {
 
     // BookCheckoutda olan statusu deyisir.Yeni booku gelib fiziki olaraq goturen zaman.
     @PutMapping("/bookCheckouts/update")
-    public BookCheckoutResponse updateBookCheckout(@RequestBody CheckoutRequestForStatus request) {
+    public BookCheckoutResponse updateBookCheckout(@RequestBody @Valid CheckoutRequestForStatus request) {
         log.info("Admin is updating checkout status for bookCheckout ID: {}", request.getBookCheckoutId());
         return bookCheckoutService.isCollectedBook(request);
     }
@@ -105,7 +106,7 @@ public class AdminController {
 
     // Yeni book yaradır
     @PostMapping("/books/create")
-    public BookResponseWithBookCount createBook(@RequestBody BookRequest bookRequest) {
+    public BookResponseWithBookCount createBook(@RequestBody @Valid BookRequest bookRequest) {
         log.info("Admin is creating a new book: {}", bookRequest.getName());
         return bookService.createBook(bookRequest);
     }
@@ -120,7 +121,7 @@ public class AdminController {
     // Book update edir
     @PutMapping("/books/update/{id}")
     public BookResponseWithBookCount updateBook(@PathVariable Long id,
-                                                @RequestBody BookRequestForBookUpdate bookRequest) {
+                                                @RequestBody @Valid BookRequestForBookUpdate bookRequest) {
         log.info("Admin is updating book with ID: {}", id);
         return bookService.updateBookById(id, bookRequest);
     }
@@ -157,7 +158,7 @@ public class AdminController {
     // Useri id ilə update edir
     @PutMapping("/users/update/{id}")
     public UserResponse updateUserById(@PathVariable Long id,
-                                       @RequestBody UserRequestForUpdate userRequest) {
+                                       @RequestBody @Valid UserRequestForUpdate userRequest) {
         log.info("Admin is updating user with ID: {}", id);
         return userService.updateUserById(id, userRequest);
     }

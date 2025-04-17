@@ -100,6 +100,6 @@ public interface BookMapper {
         book.setName(bookRequest.getName());
         book.setYear(bookRequest.getYear());
         book.setPages(bookRequest.getPages());
-        book.setTotalBooksCount(bookRequest.getTotalBooksCount());
+        book.setTotalBooksCount(bookRequest.getTotalBookCount());
     }
 }
