@@ -5,8 +5,7 @@ import az.texnoera.library_management_system.service.concrets.AuthorServiceImpl;
 import az.texnoera.library_management_system.service.concrets.BookServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +20,7 @@ public class PublicController {
 
     // Bütün authorları göstərir
     @GetMapping("/authors/all")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public Result<AuthorResponse> getAllAuthors(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
         log.info("GET /v1/public/authors/all called with page={}, size={}", page, size);
@@ -29,6 +29,7 @@ public class PublicController {
 
     // Authoru adı ilə axtarır
     @GetMapping("/authors/search-by-name/")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public AuthorResponseWithBooks getAuthorByName(@RequestParam String name) {
         log.info("GET /v1/public/authors/search-by-name called with name={}", name);
         return authorService.getAuthorByAuthorName(name);
@@ -36,6 +37,7 @@ public class PublicController {
 
     // Bütün bookları gətirir
     @GetMapping("/books/all")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public Result<BookResponse> getAllBooks(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
         log.info("GET /v1/public/books/all called with page={}, size={}", page, size);
@@ -44,6 +46,7 @@ public class PublicController {
 
     // Kateqoriyaya görə bookları göstərir
     @GetMapping("/books/search-by-bookCategory/{category}")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public Result<BookResponse> getBooksByBookCategory(@PathVariable String category,
                                                        @RequestParam(defaultValue = "0") int page,
                                                        @RequestParam(defaultValue = "10") int size) {
@@ -53,6 +56,7 @@ public class PublicController {
 
     // Book adına görə gostərir
     @GetMapping("/books/search-by-name/{bookName}")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public BookResponseWithAuthors getBookByName(@PathVariable String bookName) {
         log.info("GET /v1/public/books/search-by-name/{} called", bookName);
         return bookService.getBookByBookName(bookName);
