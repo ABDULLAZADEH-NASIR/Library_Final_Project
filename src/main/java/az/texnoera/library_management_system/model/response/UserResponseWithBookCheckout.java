@@ -19,5 +19,4 @@ public class UserResponseWithBookCheckout {
     private String email;
     private String totalFineAmount;
     private Set<BookCheckoutResponseForUser> BookCheckouts;
-
 }

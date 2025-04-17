@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
+// Exception handle-də istifadə olunur
 public class BasedExceptions extends RuntimeException {
     private HttpStatus httpStatusCode;
     private StatusCode statusCode;

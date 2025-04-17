@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
-
+// Swaggerde test etmək üçün JWT-ye görə confiqurasiyadır.
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "REST API", version = "1.0",
         description = "Hello World",

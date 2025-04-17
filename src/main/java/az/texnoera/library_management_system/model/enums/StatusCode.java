@@ -7,6 +7,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
+// Bu Frontede istədiyimiz code və message öturməyimiz üçündür
 public enum StatusCode {
     USER_NOT_FOUND(1000, "User not found"),
     BOOK_NOT_FOUND(1001, "Book not found"),

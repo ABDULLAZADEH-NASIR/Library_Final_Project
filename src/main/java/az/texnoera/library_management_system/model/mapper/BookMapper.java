@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public interface BookMapper {
 
     static Book bookRequestToBook(BookRequest bookRequest) {
+        // Book kateqoriya enumdır ve daxil edilən kateqoriyanın Category enumında olub-olmadığını yoxlayır
 
         if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
             throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Categoriya kimi bos falan data gelse iwe duwecek
@@ -99,6 +100,6 @@ public interface BookMapper {
         book.setName(bookRequest.getName());
         book.setYear(bookRequest.getYear());
         book.setPages(bookRequest.getPages());
-        book.setTotalBooksCount(bookRequest.getTotalBooksCount());
+        book.setTotalBooksCount(bookRequest.getTotalBookCount());
     }
 }

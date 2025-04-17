@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+// Spring Security üçün istifadəçi məlumatını (email-lə) gətirir
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepo userRepo;
 

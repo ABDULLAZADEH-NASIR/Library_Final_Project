@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -30,7 +29,7 @@ public class AdminSetupConfig {
     @PostConstruct
     @Transactional
     public void init() {
-        // "ROLE_ADMIN" rolunun verilənlər bazasında olub-olmaması yoxlanılır
+        // "ROLE_ADMIN" rolunun verilənlər bazasında olub-olmaması yoxlanılır ve eger yoxdursa yaradilir.
         if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
             Role adminRole = new Role();
             adminRole.setName("ROLE_ADMIN");
@@ -38,19 +37,15 @@ public class AdminSetupConfig {
             System.out.println("Admin rolu uğurla yaradıldı.");
         }
 
-        // Admin istifadəçisinin verilənlər bazasında olub-olmaması yoxlanılır
         if (!userRepository.existsByEmail("abdullayevnasir6@gmail.com")) {
             User admin = new User();
             admin.setName("Nasir");
             admin.setSurname("Abdullayev");
             admin.setFIN("5UY2TS6");
             admin.setEmail("abdullayevnasir6@gmail.com");
-            admin.setPassword(passwordEncoder.encode("4145"));  // Güclü şifrə istifadə etməyi unutmayın
-            // Admin rolunu istifadəçiyə əlavə edirik
+            admin.setPassword(passwordEncoder.encode("4145"));
             admin.setRoles(Set.of(roleRepository.findByName("ROLE_ADMIN").orElseThrow(() ->
                     new RuntimeException("Admin rolu tapılmadı"))));
-
-            // Admin istifadəçisini verilənlər bazasına əlavə edirik
             userRepository.save(admin);
         }
     }
