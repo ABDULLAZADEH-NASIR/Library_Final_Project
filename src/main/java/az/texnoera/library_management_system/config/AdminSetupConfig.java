@@ -2,9 +2,12 @@ package az.texnoera.library_management_system.config;
 
 import az.texnoera.library_management_system.entity.Role;
 import az.texnoera.library_management_system.entity.User;
+import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.repo.RoleRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
 import jakarta.annotation.PostConstruct;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +46,9 @@ public class AdminSetupConfig {
             admin.setSurname("Abdullayev");
             admin.setFIN("5UY2TS6");
             admin.setEmail("abdullayevnasir6@gmail.com");
-            admin.setPassword(passwordEncoder.encode("4145"));
+            admin.setPassword(passwordEncoder.encode("Nasir123!"));
             admin.setRoles(Set.of(roleRepository.findByName("ROLE_ADMIN").orElseThrow(() ->
-                    new RuntimeException("Admin rolu tapılmadı"))));
+                    new BasedExceptions(HttpStatus.FORBIDDEN, StatusCode.ACCESSDENIEDEXCEPTION))));
             userRepository.save(admin);
         }
     }
