@@ -18,7 +18,8 @@ public enum StatusCode {
     CATEGORY_MISSING(1006, "Category missing"),
     EMAIL_OR_PASSWORD_INCORRECT(1007, "Email or password incorrect"),
     CHECKOUT_ALREADY_COLLECTED(1008, "Checkout already collected"),
-    UNAUTHORIZED_ACTION(1009, "Unauthorized action");
+    UNAUTHORIZED_ACTION(1009, "Unauthorized action"),
+    ACCESSDENIEDEXCEPTION(10010, "Access denied");
 
     private final int code;
     private final String message;
