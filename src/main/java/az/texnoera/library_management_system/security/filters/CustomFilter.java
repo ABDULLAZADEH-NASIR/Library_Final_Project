@@ -1,7 +1,7 @@
 package az.texnoera.library_management_system.security.filters;
 
 
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.security.utilities.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -52,7 +52,7 @@ public class CustomFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);  // Filtrdən keçir
         } catch (IOException | ServletException e) {
-            throw new BasedExceptions(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED_ACTION);
+            throw new ApiException(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED_ACTION);
         }
     }
 }

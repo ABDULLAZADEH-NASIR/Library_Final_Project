@@ -2,7 +2,7 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Author;
 import az.texnoera.library_management_system.entity.Book;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.AuthorMapper;
 import az.texnoera.library_management_system.model.request.AuthorRequest;
@@ -50,7 +50,7 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Getting author by ID: {}", id);
         Author author = authorRepo.findByAuthorId(id).orElseThrow(() -> {
             log.warn("Author not found with ID: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         log.info("Author with ID {} found: {}", id, author.getName());
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
@@ -62,7 +62,7 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Getting author by name: {}", name);
         Author author = authorRepo.findByAuthorName(name).orElseThrow(() -> {
             log.warn("Author not found with name: {}", name);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         log.info("Author '{}' found with ID: {}", name, author.getId());
         return AuthorMapper.authorToAuthorResponseWithBooks(author);
@@ -74,7 +74,7 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Deleting author with ID: {}", id);
         Author author = authorRepo.findByAuthorId(id).orElseThrow(() -> {
             log.warn("Cannot delete. Author not found with ID: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         authorRepo.delete(author);
         log.info("Author with ID {} deleted successfully", id);
@@ -97,7 +97,7 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Updating author with ID: {}", id);
         Author author = authorRepo.findById(id).orElseThrow(() -> {
             log.warn("Cannot update. Author not found with ID: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         AuthorMapper.authorToAuthorResponseUpdate(author, authorRequest);
         authorRepo.save(author);
@@ -112,11 +112,11 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Adding book (ID: {}) to author (ID: {})", bookId, authorId);
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() -> {
             log.warn("Author not found with ID: {}", authorId);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         Book book = bookRepo.findBookById(bookId).orElseThrow(() -> {
             log.warn("Book not found with ID: {}", bookId);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND);
         });
 
         author.getBooks().add(book);
@@ -134,11 +134,11 @@ public class AuthorServiceImpl implements AuthorService {
         log.info("Removing book (ID: {}) from author (ID: {})", bookId, authorId);
         Author author = authorRepo.findByAuthorId(authorId).orElseThrow(() -> {
             log.warn("Author not found with ID: {}", authorId);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.AUTHOR_NOT_FOUND);
         });
         Book book = bookRepo.findBookById(bookId).orElseThrow(() -> {
             log.warn("Book not found with ID: {}", bookId);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND);
         });
 
         author.getBooks().remove(book);

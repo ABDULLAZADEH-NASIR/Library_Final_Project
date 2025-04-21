@@ -2,7 +2,7 @@ package az.texnoera.library_management_system.config;
 
 import az.texnoera.library_management_system.entity.Role;
 import az.texnoera.library_management_system.entity.User;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.repo.RoleRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
@@ -48,7 +48,7 @@ public class AdminSetupConfig {
             admin.setEmail("abdullayevnasir6@gmail.com");
             admin.setPassword(passwordEncoder.encode("Nasir123!"));
             admin.setRoles(Set.of(roleRepository.findByName("ROLE_ADMIN").orElseThrow(() ->
-                    new BasedExceptions(HttpStatus.FORBIDDEN, StatusCode.ACCESSDENIEDEXCEPTION))));
+                    new ApiException(HttpStatus.FORBIDDEN, StatusCode.ACCESSDENIEDEXCEPTION))));
             userRepository.save(admin);
         }
     }

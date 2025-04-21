@@ -1,6 +1,6 @@
-package az.texnoera.library_management_system.advice;
+package az.texnoera.library_management_system.handler;
 
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.response.ErrorResult;
 import az.texnoera.library_management_system.model.response.ErrorResultData;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class GlobalExceptionsHandle {
 
     // Bütün exceptionlari handle edir
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResult> BasedExceptionsHandle(BasedExceptions e) {
+    public ResponseEntity<ErrorResult> ApiException(ApiException e) {
         log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).
                 body(new ErrorResult(e.getStatusCode().getCode(), e.getMessage()));

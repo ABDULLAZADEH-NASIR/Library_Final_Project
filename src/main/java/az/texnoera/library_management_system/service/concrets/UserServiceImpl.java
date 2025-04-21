@@ -4,11 +4,11 @@ import az.texnoera.library_management_system.entity.Role;
 import az.texnoera.library_management_system.model.request.LoginRequest;
 import az.texnoera.library_management_system.repo.RoleRepo;
 import az.texnoera.library_management_system.security.utilities.JwtUtils;
-import az.texnoera.library_management_system.utils.NotificationService;
-import az.texnoera.library_management_system.utils.OtpService;
+import az.texnoera.library_management_system.service.notification.NotificationService;
+import az.texnoera.library_management_system.service.otp.OtpService;
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
@@ -104,12 +104,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findByEmail(loginRequest.getMail())
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", loginRequest.getMail());
-                    return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+                    return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
                 });
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             log.error("Incorrect password for email: {}", loginRequest.getMail());
-            throw new BasedExceptions(HttpStatus.UNAUTHORIZED, StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
+            throw new ApiException(HttpStatus.UNAUTHORIZED, StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
         }
 
         String token = jwtUtils.generateJwtToken(user.getUsername(),
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findUserByEmail(email)
                 .orElseThrow(() -> {
                     log.error("Current user not found in DB: {}", email);
-                    return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+                    return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
                 });
         return UserMapper.userToUserResponseWithCheckout(user);
     }
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponse(user);
     }
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user with checkouts by id: {}", id);
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() -> {
             log.error("User with checkouts not found by id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponseWithCheckout(user);
     }
@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
         log.info("Deleting user by id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found while deleting with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         userRepo.delete(user);
         log.info("User deleted successfully with id: {}", id);
@@ -184,7 +184,7 @@ public class UserServiceImpl implements UserService {
         log.info("Updating user with id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found while updating with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         UserMapper.userUpdateRequestToUser(user, userRequest);
         UserResponse updated = UserMapper.userToUserResponse(userRepo.save(user));
@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by FIN: {}", fin);
         User user = userRepo.findUserByFIN(fin).orElseThrow(() -> {
             log.error("User not found with FIN: {}", fin);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponseWithCheckout(user);
     }

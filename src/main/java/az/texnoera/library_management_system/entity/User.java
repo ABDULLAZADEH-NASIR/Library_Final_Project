@@ -3,7 +3,6 @@ package az.texnoera.library_management_system.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
