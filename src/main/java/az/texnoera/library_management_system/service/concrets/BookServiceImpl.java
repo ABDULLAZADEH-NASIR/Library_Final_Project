@@ -36,12 +36,6 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponseWithBookCount createBook(BookRequest bookRequest) {
         log.info("Creating a new book with name: {}", bookRequest.getName());
-
-        // Book kateqoriya enumdır ve daxil edilən kateqoriyanın Category enumında olub-olmadığını yoxlayır
-        if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Categoriya kimi bos falan data gelse iwe duwecek
-        }
-
         // Enum deyeri yaradiriq
         BookCategory category;
         try {
@@ -50,7 +44,6 @@ public class BookServiceImpl implements BookService {
         } catch (IllegalArgumentException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun deyer tapilmadiqda exception atilir
         }
-
 
         Book book = BookMapper.bookRequestToBook(bookRequest);
         book.setCategory(category);
