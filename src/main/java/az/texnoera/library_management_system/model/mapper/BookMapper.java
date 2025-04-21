@@ -1,16 +1,14 @@
 package az.texnoera.library_management_system.model.mapper;
 
 import az.texnoera.library_management_system.entity.Book;
-import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.BookCategory;
-import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.request.BookRequest;
 import az.texnoera.library_management_system.model.request.BookRequestForBookUpdate;
 import az.texnoera.library_management_system.model.response.AuthorResponseForBook;
 import az.texnoera.library_management_system.model.response.BookResponse;
 import az.texnoera.library_management_system.model.response.BookResponseWithAuthors;
 import az.texnoera.library_management_system.model.response.BookResponseWithBookCount;
-import org.springframework.http.HttpStatus;
+
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -19,21 +17,6 @@ import java.util.stream.Collectors;
 public interface BookMapper {
 
     static Book bookRequestToBook(BookRequest bookRequest) {
-        // Book kateqoriya enumdır ve daxil edilən kateqoriyanın Category enumında olub-olmadığını yoxlayır
-
-        if (bookRequest.getCategory() == null || bookRequest.getCategory().isBlank()) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, StatusCode.CATEGORY_MISSING); // Categoriya kimi bos falan data gelse iwe duwecek
-        }
-
-        // Enum deyeri yaradiriq
-        BookCategory category;
-        try {
-            // category deyerinin tam uygun wekilde enum ile muqayise edirik
-            category = BookCategory.valueOf(bookRequest.getCategory().trim()); // Exact match tələb olunur, kiçik/böyük fərqinə baxılır
-        } catch (IllegalArgumentException e) {
-            throw new ApiException(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun deyer tapilmadiqda exception atilir
-        }
-
 
         return Book.builder()
                 .name(bookRequest.getName())
@@ -43,7 +26,6 @@ public interface BookMapper {
                 .pages(bookRequest.getPages())
                 .totalBooksCount(bookRequest.getTotalBookCount())
                 .avialableBooksCount(bookRequest.getAvailableBookCount())
-                .category(category)
                 .build();
     }
 
