@@ -55,27 +55,31 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.userRequestToUser(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
-        Role role = roleRepo.findByName("ROLE_USER")
-                .orElseGet(() -> {
-                    log.warn("ROLE_USER not found, creating new.");
-                    Role newRole = new Role();
-                    newRole.setName("ROLE_USER");
-                    return roleRepo.save(newRole);
-                });
+        if (!userRepo.existsByFinAndEmail(user.getFIN(), user.getEmail())) {
+            Role role = roleRepo.findByName("ROLE_USER")
+                    .orElseGet(() -> {
+                        log.warn("ROLE_USER not found, creating new.");
+                        Role newRole = new Role();
+                        newRole.setName("ROLE_USER");
+                        return roleRepo.save(newRole);
+                    });
 
-        user.setRoles(Set.of(role));
-        int otp = otpService.generateOtp();
-        otpService.saveOtp(userRequest.getMail(), otp);
-        boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
-        this.tempUser = user;
+            user.setRoles(Set.of(role));
+            int otp = otpService.generateOtp();
+            otpService.saveOtp(userRequest.getMail(), otp);
+            boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
+            this.tempUser = user;
 
-        if (emailSend) {
-            log.info("OTP sent successfully to email: {}", user.getEmail());
-            return "OTP has been sent to your email. Please verify...";
+            if (emailSend) {
+                log.info("OTP sent successfully to email: {}", user.getEmail());
+                return "OTP has been sent to your email. Please verify...";
+            } else {
+                log.error("OTP generated but email couldn't be sent to: {}", user.getEmail());
+                tempUser = null;
+                return "OTP generated, but email could not be sent. Please try again or contact support.";
+            }
         } else {
-            log.error("OTP generated but email couldn't be sent to: {}", user.getEmail());
-            tempUser = null;
-            return "OTP generated, but email could not be sent. Please try again or contact support.";
+            throw new ApiException(HttpStatus.CONFLICT, StatusCode.USER_ALREADY_EXISTS);
         }
     }
 
