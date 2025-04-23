@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     // Authoru id ilə silir
-    @DeleteMapping("/authors/delete/{id}")
+    @DeleteMapping("/authors/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void deleteAuthorById(@PathVariable Long id) {
         log.warn("Admin is deleting author with ID: {}", id);
@@ -41,7 +41,7 @@ public class AdminController {
     }
 
     // Yeni author yaradır
-    @PostMapping("/authors/create")
+    @PostMapping("/authors")
     @ResponseStatus(HttpStatus.CREATED) // 201
     public AuthorResponseWithBooks addAuthor(@RequestBody @Valid AuthorRequest authorRequest) {
         log.info("Admin is creating a new author: {}", authorRequest.getName());
@@ -49,7 +49,7 @@ public class AdminController {
     }
 
     // Authoru id ilə update edir
-    @PutMapping("/authors/update/{id}")
+    @PutMapping("/authors/{id}")
     @ResponseStatus(HttpStatus.OK) // 200
     public AuthorResponseWithBooks updateAuthorById(@PathVariable Long id,
                                                     @RequestBody @Valid AuthorRequest authorRequest) {
@@ -76,7 +76,7 @@ public class AdminController {
     }
 
     // Bütün bookCheckoutları göstərir
-    @GetMapping("/bookCheckouts/all")
+    @GetMapping("/bookCheckouts")
     @ResponseStatus(HttpStatus.OK) // 200
     public Result<BookCheckoutResponse> getAllBookCheckouts(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size) {
@@ -93,7 +93,7 @@ public class AdminController {
     }
 
     // BookCheckoutda olan statusu deyisir.Yeni booku gelib fiziki olaraq goturen zaman.
-    @PutMapping("/bookCheckouts/update")
+    @PutMapping("/bookCheckouts")
     @ResponseStatus(HttpStatus.OK) // 200
     public BookCheckoutResponse updateBookCheckout(@RequestBody @Valid CheckoutRequestForStatus request) {
         log.info("Admin is updating checkout status for bookCheckout ID: {}", request.getBookCheckoutId());
@@ -101,7 +101,7 @@ public class AdminController {
     }
 
     // BookCheckoutu id ilə silir
-    @DeleteMapping("/bookCheckouts/delete/{id}")
+    @DeleteMapping("/bookCheckouts/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) //204
     public void deleteBookCheckout(@PathVariable Long id) {
         log.warn("Admin is deleting book checkout with ID: {}", id);
@@ -117,7 +117,7 @@ public class AdminController {
     }
 
     // Yeni book yaradır
-    @PostMapping("/books/create")
+    @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED) // 201
     public BookResponseWithBookCount createBook(@RequestBody @Valid BookRequest bookRequest) {
         log.info("Admin is creating a new book: {}", bookRequest.getName());
@@ -125,7 +125,7 @@ public class AdminController {
     }
 
     // Book id ilə silir
-    @DeleteMapping("/books/delete/{id}")
+    @DeleteMapping("/books/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void deleteBookById(@PathVariable Long id) {
         log.warn("Admin is deleting book with ID: {}", id);
@@ -133,7 +133,7 @@ public class AdminController {
     }
 
     // Book update edir
-    @PutMapping("/books/update/{id}")
+    @PutMapping("/books/{id}")
     @ResponseStatus(HttpStatus.OK) // 200
     public BookResponseWithBookCount updateBook(@PathVariable Long id,
                                                 @RequestBody @Valid BookRequestForBookUpdate bookRequest) {
@@ -158,7 +158,7 @@ public class AdminController {
     }
 
     // Bütün userləri göstərir
-    @GetMapping("/users/all")
+    @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK) // 200
     public Result<UserResponse> getAllUsers(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
@@ -167,7 +167,7 @@ public class AdminController {
     }
 
     // Useri id ilə silir
-    @DeleteMapping("/users/delete/{id}")
+    @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
     public void deleteUserById(@PathVariable Long id) {
         log.warn("Admin is deleting user with ID: {}", id);
@@ -175,7 +175,7 @@ public class AdminController {
     }
 
     // Useri id ilə update edir
-    @PutMapping("/users/update/{id}")
+    @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK) // 200
     public UserResponse updateUserById(@PathVariable Long id,
                                        @RequestBody @Valid UserRequestForUpdate userRequest) {
@@ -190,6 +190,7 @@ public class AdminController {
         log.info("Admin requested user by FIN: {}", fin);
         return userService.getUserByFin(fin);
     }
+
 
     // Book id ilə və book sayı da göstərilməklə göstərilir
     @GetMapping("/book/search-with-count/{id}")

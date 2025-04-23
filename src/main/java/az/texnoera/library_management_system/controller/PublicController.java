@@ -19,7 +19,7 @@ public class PublicController {
     private final BookServiceImpl bookService;
 
     // Bütün authorları göstərir
-    @GetMapping("/authors/all")
+    @GetMapping("/authors")
     @ResponseStatus(HttpStatus.OK)  // 200
     public Result<AuthorResponse> getAllAuthors(@RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size) {
@@ -36,7 +36,7 @@ public class PublicController {
     }
 
     // Bütün bookları gətirir
-    @GetMapping("/books/all")
+    @GetMapping("/books")
     @ResponseStatus(HttpStatus.OK)  // 200
     public Result<BookResponse> getAllBooks(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
