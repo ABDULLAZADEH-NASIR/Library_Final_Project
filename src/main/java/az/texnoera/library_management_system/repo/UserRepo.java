@@ -14,14 +14,24 @@ import java.util.Optional;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts WHERE u.id=:id")
+    @Query("""
+                SELECT DISTINCT u FROM User u 
+                LEFT JOIN FETCH u.bookCheckouts bc
+                LEFT JOIN FETCH bc.book
+                WHERE u.id = :id
+            """)
     Optional<User> findUserWithBorrow(Long id);
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts" +
             " JOIN u.roles r WHERE r.name = 'ROLE_USER' ORDER BY u.name ASC")
     Page<User> findAllUsers(Pageable pageable);
 
-    @Query("SELECT DISTINCT  u FROM User u LEFT JOIN FETCH u.bookCheckouts WHERE u.FIN=:fin")
+    @Query("""
+                SELECT DISTINCT u FROM User u 
+                LEFT JOIN FETCH u.bookCheckouts bc 
+                LEFT JOIN FETCH bc.book 
+                WHERE u.FIN = :fin
+            """)
     Optional<User> findUserByFIN(String fin);
 
     @Query("SELECT DISTINCT u FROM User u LEFT JOIN FETCH u.bookCheckouts")
@@ -44,5 +54,5 @@ public interface UserRepo extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.FIN = :fin AND u.email = :email")
-    boolean existsByFinAndEmail( String fin, String email);
+    boolean existsByFinAndEmail(String fin, String email);
 }

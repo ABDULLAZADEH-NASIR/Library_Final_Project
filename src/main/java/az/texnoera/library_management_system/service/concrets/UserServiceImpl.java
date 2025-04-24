@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Role;
 import az.texnoera.library_management_system.model.request.LoginRequest;
+import az.texnoera.library_management_system.model.response.LoginResponse;
 import az.texnoera.library_management_system.repo.RoleRepo;
 import az.texnoera.library_management_system.security.utilities.JwtUtils;
 import az.texnoera.library_management_system.service.notification.NotificationService;
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // Save olunan Userin Login olur ve bu zaman roluna görə JWT alır
-    public String login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         log.info("Login attempt for email: {}", loginRequest.getMail());
         User user = userRepo.findByEmail(loginRequest.getMail())
                 .orElseThrow(() -> {
@@ -119,7 +120,14 @@ public class UserServiceImpl implements UserService {
         String token = jwtUtils.generateJwtToken(user.getUsername(),
                 user.getRoles().stream().map(Role::getName).toList());
         log.info("Login successful for email: {}", loginRequest.getMail());
-        return token;
+
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setUser_id(user.getId());
+        loginResponse.setName(user.getName());
+        loginResponse.setSurname(user.getSurname());
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setToken(token);
+        return loginResponse;
     }
 
     // User öz profilinə baxır

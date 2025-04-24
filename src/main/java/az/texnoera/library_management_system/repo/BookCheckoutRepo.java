@@ -17,7 +17,12 @@ public interface BookCheckoutRepo extends JpaRepository<BookCheckout, Long> {
     @Query("SELECT DISTINCT b FROM BookCheckout b LEFT JOIN FETCH b.user")
     Page<BookCheckout> findAllBookCheckouts(Pageable pageable);
 
-    @Query("SELECT b FROM BookCheckout b LEFT JOIN FETCH b.user WHERE b.id=:id")
+    @Query("""
+                SELECT b FROM BookCheckout b
+                LEFT JOIN FETCH b.user
+                LEFT JOIN FETCH b.book
+                WHERE b.id = :id
+            """)
     Optional<BookCheckout> findBookCheckoutById(Long id);
 
     @Query("SELECT DISTINCT b FROM BookCheckout b LEFT JOIN FETCH b.user LEFT JOIN FETCH b.book " +

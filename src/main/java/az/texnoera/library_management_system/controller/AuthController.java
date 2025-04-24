@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.controller;
 
 import az.texnoera.library_management_system.model.request.LoginRequest;
 import az.texnoera.library_management_system.model.request.UserRequest;
+import az.texnoera.library_management_system.model.response.LoginResponse;
 import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class AuthController {
     // Save olunan Userin Login olur ve bu zaman roluna görə JWT alır
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK) // 200
-    public String login(@RequestBody @Valid LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) {
         log.info("İstifadəçi login tələbi: email={}, password={}", loginRequest.getMail(),
                 loginRequest.getPassword());
         return userService.login(loginRequest);

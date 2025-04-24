@@ -44,15 +44,14 @@ public class User implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<BookCheckout> bookCheckouts = new HashSet<>();
+
     // User Roluna görə axtarıs edilən zaman Securty-də mail-nə görə axtarılacaq
     @Override
     public String getUsername() {
         return this.email;
     }
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BookCheckout> bookCheckouts = new HashSet<>();
-
 
     // Userin ümumi borcu əgər null dəyərindədirsə bu zaman 0 dəyər alacaq
     @PrePersist
