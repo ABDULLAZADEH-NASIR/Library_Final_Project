@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -220,24 +221,33 @@ public class UserServiceImpl implements UserService {
     // həmçinin Userin ümumi borcu hesablanır Userin Emailinə borc bildirişi göndərilir
 
     @Transactional
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 * * * * ?") // hər 1 dəqiqə işləsin
     public void sendScheduledDebtNotifications() {
         log.info("Scheduled task started: sending debt notifications.");
         List<User> users = userRepo.findAllUsersWithBorrowedBooks();
 
-        // Umumi olarag hem kitabin hemde userin borclarini yenileyir (Borc bildirisi yollamaq ucun)
         for (User user : users) {
-            for (BookCheckout bookCheckout : user.getBookCheckouts()) {
-                bookCheckout.calculateFine(); // Kitabin borcunu yenileyir
-            }
-            user.updateTotalDebt(); // Umumi borcu yenileyir
-            userRepo.save(user); // Yenilenmiw borcu DB-e yazir
+            boolean hasOverdueCollectedBooks = false;
 
-            if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) {
-                log.info("User with email {} has debt: {}", user.getEmail(), user.getTotalFineAmount());
-                notificationService.sendMailDebtMessage(user);
+            for (BookCheckout bookCheckout : user.getBookCheckouts()) {
+                // Əgər kitab götürülübsə və vaxtı keçibsə
+                if (bookCheckout.isCollected() && LocalDateTime.now().isAfter(bookCheckout.getReturnDate())) {
+                    bookCheckout.calculateFine(); // borc hesabla
+                    hasOverdueCollectedBooks = true;
+                }
+            }
+
+            if (hasOverdueCollectedBooks) {
+                user.updateTotalDebt(); // ümumi borcu yenilə
+                userRepo.save(user); // DB-ə yaz
+
+                if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    log.info("User with email {} has debt: {}", user.getEmail(), user.getTotalFineAmount());
+                    notificationService.sendMailDebtMessage(user);
+                }
             }
         }
+
         log.info("Scheduled debt notification task completed.");
     }
 }

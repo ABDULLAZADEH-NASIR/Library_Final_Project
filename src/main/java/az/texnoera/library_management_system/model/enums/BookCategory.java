@@ -13,5 +13,6 @@ public enum BookCategory {
     SCIENCE,
     ROMANCE,
     DRAMA,
-    HISTORY;
+    HISTORY,
+    PROGRAMMING;
 }
