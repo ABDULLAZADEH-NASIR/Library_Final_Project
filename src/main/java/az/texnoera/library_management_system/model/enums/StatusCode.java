@@ -19,7 +19,8 @@ public enum StatusCode {
     EMAIL_OR_PASSWORD_INCORRECT(1007, "Email or password incorrect"),
     CHECKOUT_ALREADY_COLLECTED(1008, "Checkout already collected"),
     UNAUTHORIZED_ACTION(1009, "Unauthorized action"),
-    ACCESSDENIEDEXCEPTION(10010, "Access denied");
+    ACCESSDENIEDEXCEPTION(10010, "Access denied"),
+    USER_ALREADY_EXISTS(1001, "User already exists");
 
     private final int code;
     private final String message;

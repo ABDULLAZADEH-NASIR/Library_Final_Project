@@ -2,6 +2,7 @@ package az.texnoera.library_management_system.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -31,7 +32,7 @@ public class BookCheckout {
     @JoinColumn
     private User user;
 
-    @Positive
+    @PositiveOrZero
     private BigDecimal fineAmount;
 
     private boolean isCollected;
@@ -42,14 +43,14 @@ public class BookCheckout {
     private LocalDateTime returnDate;
 
 
-    // BookCheckout yaranan zaman book qaytarılma vaxtı set olunur(Test üçün qaytarılma vaxtını 10 dəqiqə etmişəm)
+    // BookCheckout yaranan zaman book qaytarılma vaxtı set olunur(Test üçün qaytarılma vaxtını 7 dəqiqə etmişəm)
     @PrePersist
     public void setDatesAutomatically() {
         if (this.checkoutDate == null) {
             this.checkoutDate = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // Saniyeni saxlayir, nanosaniyeleri sifirlayir
         }
         if (this.returnDate == null) {
-            this.returnDate = this.checkoutDate.plusMinutes(10);
+            this.returnDate = this.checkoutDate.plusMinutes(7);
         }
         if (this.fineAmount == null) {
             this.fineAmount = BigDecimal.ZERO;

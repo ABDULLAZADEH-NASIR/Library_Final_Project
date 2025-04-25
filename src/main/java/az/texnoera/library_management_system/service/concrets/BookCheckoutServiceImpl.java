@@ -3,7 +3,7 @@ package az.texnoera.library_management_system.service.concrets;
 import az.texnoera.library_management_system.entity.Book;
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.BookCheckoutMapper;
 import az.texnoera.library_management_system.model.request.BookCheckoutRequest;
@@ -14,7 +14,7 @@ import az.texnoera.library_management_system.repo.BookRepo;
 import az.texnoera.library_management_system.repo.BookCheckoutRepo;
 import az.texnoera.library_management_system.repo.UserRepo;
 import az.texnoera.library_management_system.service.abstracts.BookCheckoutService;
-import az.texnoera.library_management_system.utils.NotificationService;
+import az.texnoera.library_management_system.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
     public BookCheckoutResponse getCheckoutById(Long id) {
         log.info("Fetching book checkout by ID: {}", id);
         BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
         return BookCheckoutMapper.bookCheckoutToResponse(bookCheckout);
     }
 
@@ -68,14 +69,14 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
                 bookCheckoutRequest.getUserId(), bookCheckoutRequest.getBookId());
 
         User user = userRepo.findById(bookCheckoutRequest.getUserId())
-                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND));
 
         Book book = bookRepo.findById(bookCheckoutRequest.getBookId())
-                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
 
         if (book.getAvialableBooksCount() <= 0) {
             log.warn("Book is not available for checkout - Book ID: {}", book.getId());
-            throw new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_AVAILABLE);
+            throw new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_AVAILABLE);
         }
 
         // BookCheckout yaradılır
@@ -100,10 +101,10 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
     public void deleteCheckoutByCheckoutId(Long id) {
         log.info("Deleting book checkout by ID: {}", id);
         BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
         User user = bookCheckout.getUser();
         Book book = bookRepo.findBookById(bookCheckout.getBook().getId()).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
 
         book.setAvialableBooksCount(book.getAvialableBooksCount() + 1);
         bookRepo.save(book);
@@ -129,7 +130,7 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         log.info("Marking book as collected - Checkout ID: {}", request.getBookCheckoutId());
         BookCheckout bookCheckout = bookCheckoutRepo.findBookCheckoutById(request.getBookCheckoutId())
                 .orElseThrow(() ->
-                        new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+                        new ApiException(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
 
         bookCheckout.setCollected(true);
         bookCheckoutRepo.save(bookCheckout);
@@ -150,16 +151,16 @@ public class BookCheckoutServiceImpl implements BookCheckoutService {
         log.info("User with email {} is attempting to delete their checkout - ID: {}", email, bookCheckoutId);
 
         BookCheckout checkout = bookCheckoutRepo.findById(bookCheckoutId)
-                .orElseThrow(() -> new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, StatusCode.CHECKOUT_NOT_FOUND));
 
         if (!checkout.getUser().getEmail().equals(email)) {
             log.warn("Unauthorized action: User email mismatch");
-            throw new BasedExceptions(HttpStatus.FORBIDDEN, StatusCode.UNAUTHORIZED_ACTION);
+            throw new ApiException(HttpStatus.FORBIDDEN, StatusCode.UNAUTHORIZED_ACTION);
         }
 
         if (checkout.isCollected()) {
             log.warn("Checkout already collected. Cannot delete - ID: {}", bookCheckoutId);
-            throw new BasedExceptions(HttpStatus.BAD_REQUEST, StatusCode.CHECKOUT_ALREADY_COLLECTED);
+            throw new ApiException(HttpStatus.BAD_REQUEST, StatusCode.CHECKOUT_ALREADY_COLLECTED);
         }
 
         checkout.getBook().setAvialableBooksCount(

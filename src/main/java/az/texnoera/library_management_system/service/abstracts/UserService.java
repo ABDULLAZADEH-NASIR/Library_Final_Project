@@ -3,6 +3,7 @@ package az.texnoera.library_management_system.service.abstracts;
 import az.texnoera.library_management_system.model.request.LoginRequest;
 import az.texnoera.library_management_system.model.request.UserRequest;
 import az.texnoera.library_management_system.model.request.UserRequestForUpdate;
+import az.texnoera.library_management_system.model.response.LoginResponse;
 import az.texnoera.library_management_system.model.response.Result;
 import az.texnoera.library_management_system.model.response.UserResponse;
 import az.texnoera.library_management_system.model.response.UserResponseWithBookCheckout;
@@ -24,7 +25,7 @@ public interface UserService {
 
     UserResponseWithBookCheckout getUserByFin(String fin);
 
-    String login(LoginRequest loginRequest);
+    LoginResponse login(LoginRequest loginRequest);
 
     UserResponseWithBookCheckout getCurrentUser();
 }

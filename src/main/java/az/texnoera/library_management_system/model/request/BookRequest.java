@@ -25,6 +25,7 @@ public class BookRequest {
     private int pages;
 
     @NotBlank(message = "Category cannot be blank")
+    @NotNull(message ="Category cannot be null" )
     private String category;
 
     @NotNull(message = "Total book count cannot be null")

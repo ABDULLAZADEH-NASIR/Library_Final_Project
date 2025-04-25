@@ -44,4 +44,7 @@ public class UserRequest {
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Invalid email format")
     private String mail;
+
+    public UserRequest(String john, String doe, String mail, String password123) {
+    }
 }

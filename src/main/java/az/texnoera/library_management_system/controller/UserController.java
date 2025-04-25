@@ -8,6 +8,7 @@ import az.texnoera.library_management_system.service.concrets.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class UserController {
 
     // User öz BookCheckout-un yaradır...Yəni istədiyi booku seçir və öz rezervinə əlavə edir
     @PostMapping("/bookCheckouts/create-add-book")
+    @ResponseStatus(HttpStatus.CREATED)  // 201
     public BookCheckoutResponse addBookInCheckout(@RequestBody @Valid BookCheckoutRequest bookCheckoutRequest) {
         log.info("POST /v1/user/bookCheckouts/create-add-book called with bookId={}, " +
                         "userId={}",
@@ -32,6 +34,7 @@ public class UserController {
 
     // User öz profilinə baxır
     @GetMapping("/me")
+    @ResponseStatus(HttpStatus.OK)  // 200
     public UserResponseWithBookCheckout getCurrentUser() {
         log.info("GET /v1/user/me called - fetching current user's profile");
         return userService.getCurrentUser();
@@ -39,6 +42,7 @@ public class UserController {
 
     // User öz BookCheckout-dan secdiyi booku əgər fiziki olaraq götürməyibsə silib cixara bilir
     @DeleteMapping("/bookCheckouts/delete-for-user/{bookCheckoutId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)  // 204
     public void deleteBookInCheckout(@PathVariable Long bookCheckoutId) {
         log.info("DELETE /v1/user/bookCheckouts/delete-for-user/{} called", bookCheckoutId);
         bookCheckoutService.deleteCheckoutForUser(bookCheckoutId);

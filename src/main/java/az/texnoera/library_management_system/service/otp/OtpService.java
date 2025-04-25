@@ -1,9 +1,9 @@
-package az.texnoera.library_management_system.utils;
+package az.texnoera.library_management_system.service.otp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class OtpService {
     private final JavaMailSender mailSender;

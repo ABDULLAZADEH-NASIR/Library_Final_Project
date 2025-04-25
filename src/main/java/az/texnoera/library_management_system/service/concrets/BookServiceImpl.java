@@ -1,7 +1,7 @@
 package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Book;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.BookCategory;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.BookMapper;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,12 +31,23 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     private final BookRepo bookRepo;
 
+
     // Yeni book yaradır
     @Transactional
     @Override
     public BookResponseWithBookCount createBook(BookRequest bookRequest) {
         log.info("Creating a new book with name: {}", bookRequest.getName());
+        // Enum deyeri yaradiriq
+        BookCategory category;
+        try {
+            // category deyerinin tam uygun wekilde enum ile muqayise edirik
+            category = BookCategory.valueOf(bookRequest.getCategory().trim()); // Exact match tələb olunur, kiçik/böyük fərqinə baxılır
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(HttpStatus.NOT_FOUND, StatusCode.CATEGORY_NOT_FOUND); // Uygun deyer tapilmadiqda exception atilir
+        }
+
         Book book = BookMapper.bookRequestToBook(bookRequest);
+        book.setCategory(category);
         book = bookRepo.save(book);
         log.info("Book created successfully with ID: {}", book.getId());
         return BookMapper.bookToBookResponseWithBookCount(book);
@@ -59,7 +71,7 @@ public class BookServiceImpl implements BookService {
     public BookResponseWithBookCount getBookWithCountById(Long id) {
         log.info("Fetching book with count by ID: {}", id);
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         log.info("Book found - ID: {}", book.getId());
         return BookMapper.bookToBookResponseWithBookCount(book);
     }
@@ -69,7 +81,7 @@ public class BookServiceImpl implements BookService {
     public BookResponseWithBookCount getBookById(Long id) {
         log.info("Fetching book by ID: {}", id);
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         log.info("Book found - ID: {}", book.getId());
         return BookMapper.bookToBookResponseWithBookCount(book);
     }
@@ -79,7 +91,7 @@ public class BookServiceImpl implements BookService {
     public BookResponseWithAuthors getBookByBookName(String bookName) {
         log.info("Fetching book by name: {}", bookName);
         Book book = bookRepo.findBookByName(bookName).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         log.info("Book found - Name: {}", book.getName());
         return BookMapper.bookToBookResponseWithAuthors(book);
     }
@@ -89,7 +101,7 @@ public class BookServiceImpl implements BookService {
     public void deleteBookById(Long id) {
         log.info("Deleting book by ID: {}", id);
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         bookRepo.delete(book);
         log.info("Book deleted successfully - ID: {}", id);
     }
@@ -100,7 +112,7 @@ public class BookServiceImpl implements BookService {
     public BookResponseWithBookCount updateBookById(Long id, BookRequestForBookUpdate bookRequest) {
         log.info("Updating book by ID: {}", id);
         Book book = bookRepo.findBookById(id).orElseThrow(() ->
-                new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
+                new ApiException(HttpStatus.NOT_FOUND, StatusCode.BOOK_NOT_FOUND));
         BookMapper.bookUpdateToBook(book, bookRequest);
         Book updatedBook = bookRepo.save(book);
         log.info("Book updated successfully - ID: {}", updatedBook.getId());

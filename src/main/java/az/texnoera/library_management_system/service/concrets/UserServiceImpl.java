@@ -2,13 +2,14 @@ package az.texnoera.library_management_system.service.concrets;
 
 import az.texnoera.library_management_system.entity.Role;
 import az.texnoera.library_management_system.model.request.LoginRequest;
+import az.texnoera.library_management_system.model.response.LoginResponse;
 import az.texnoera.library_management_system.repo.RoleRepo;
 import az.texnoera.library_management_system.security.utilities.JwtUtils;
-import az.texnoera.library_management_system.utils.NotificationService;
-import az.texnoera.library_management_system.utils.OtpService;
+import az.texnoera.library_management_system.service.notification.NotificationService;
+import az.texnoera.library_management_system.service.otp.OtpService;
 import az.texnoera.library_management_system.entity.BookCheckout;
 import az.texnoera.library_management_system.entity.User;
-import az.texnoera.library_management_system.exception_Handle.BasedExceptions;
+import az.texnoera.library_management_system.exception.ApiException;
 import az.texnoera.library_management_system.model.enums.StatusCode;
 import az.texnoera.library_management_system.model.mapper.UserMapper;
 import az.texnoera.library_management_system.model.request.UserRequest;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -55,27 +57,31 @@ public class UserServiceImpl implements UserService {
         User user = UserMapper.userRequestToUser(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
-        Role role = roleRepo.findByName("ROLE_USER")
-                .orElseGet(() -> {
-                    log.warn("ROLE_USER not found, creating new.");
-                    Role newRole = new Role();
-                    newRole.setName("ROLE_USER");
-                    return roleRepo.save(newRole);
-                });
+        if (!userRepo.existsByFinAndEmail(user.getFIN(), user.getEmail())) {
+            Role role = roleRepo.findByName("ROLE_USER")
+                    .orElseGet(() -> {
+                        log.warn("ROLE_USER not found, creating new.");
+                        Role newRole = new Role();
+                        newRole.setName("ROLE_USER");
+                        return roleRepo.save(newRole);
+                    });
 
-        user.setRoles(Set.of(role));
-        int otp = otpService.generateOtp();
-        otpService.saveOtp(userRequest.getMail(), otp);
-        boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
-        this.tempUser = user;
+            user.setRoles(Set.of(role));
+            int otp = otpService.generateOtp();
+            otpService.saveOtp(userRequest.getMail(), otp);
+            boolean emailSend = otpService.sendOtpEmail(user.getEmail(), otp);
+            this.tempUser = user;
 
-        if (emailSend) {
-            log.info("OTP sent successfully to email: {}", user.getEmail());
-            return "OTP has been sent to your email. Please verify...";
+            if (emailSend) {
+                log.info("OTP sent successfully to email: {}", user.getEmail());
+                return "OTP has been sent to your email. Please verify...";
+            } else {
+                log.error("OTP generated but email couldn't be sent to: {}", user.getEmail());
+                tempUser = null;
+                return "OTP generated, but email could not be sent. Please try again or contact support.";
+            }
         } else {
-            log.error("OTP generated but email couldn't be sent to: {}", user.getEmail());
-            tempUser = null;
-            return "OTP generated, but email could not be sent. Please try again or contact support.";
+            throw new ApiException(HttpStatus.CONFLICT, StatusCode.USER_ALREADY_EXISTS);
         }
     }
 
@@ -99,23 +105,30 @@ public class UserServiceImpl implements UserService {
     }
 
     // Save olunan Userin Login olur ve bu zaman roluna görə JWT alır
-    public String login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) {
         log.info("Login attempt for email: {}", loginRequest.getMail());
         User user = userRepo.findByEmail(loginRequest.getMail())
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", loginRequest.getMail());
-                    return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+                    return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
                 });
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             log.error("Incorrect password for email: {}", loginRequest.getMail());
-            throw new BasedExceptions(HttpStatus.UNAUTHORIZED, StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
+            throw new ApiException(HttpStatus.UNAUTHORIZED, StatusCode.EMAIL_OR_PASSWORD_INCORRECT);
         }
 
         String token = jwtUtils.generateJwtToken(user.getUsername(),
                 user.getRoles().stream().map(Role::getName).toList());
         log.info("Login successful for email: {}", loginRequest.getMail());
-        return token;
+
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setUser_id(user.getId());
+        loginResponse.setName(user.getName());
+        loginResponse.setSurname(user.getSurname());
+        loginResponse.setEmail(user.getEmail());
+        loginResponse.setToken(token);
+        return loginResponse;
     }
 
     // User öz profilinə baxır
@@ -127,7 +140,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findUserByEmail(email)
                 .orElseThrow(() -> {
                     log.error("Current user not found in DB: {}", email);
-                    return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+                    return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
                 });
         return UserMapper.userToUserResponseWithCheckout(user);
     }
@@ -138,7 +151,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponse(user);
     }
@@ -149,7 +162,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user with checkouts by id: {}", id);
         User user = userRepo.findUserWithBorrow(id).orElseThrow(() -> {
             log.error("User with checkouts not found by id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponseWithCheckout(user);
     }
@@ -171,7 +184,7 @@ public class UserServiceImpl implements UserService {
         log.info("Deleting user by id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found while deleting with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         userRepo.delete(user);
         log.info("User deleted successfully with id: {}", id);
@@ -184,7 +197,7 @@ public class UserServiceImpl implements UserService {
         log.info("Updating user with id: {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.error("User not found while updating with id: {}", id);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         UserMapper.userUpdateRequestToUser(user, userRequest);
         UserResponse updated = UserMapper.userToUserResponse(userRepo.save(user));
@@ -198,7 +211,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by FIN: {}", fin);
         User user = userRepo.findUserByFIN(fin).orElseThrow(() -> {
             log.error("User not found with FIN: {}", fin);
-            return new BasedExceptions(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
+            return new ApiException(HttpStatus.NOT_FOUND, StatusCode.USER_NOT_FOUND);
         });
         return UserMapper.userToUserResponseWithCheckout(user);
     }
@@ -208,24 +221,33 @@ public class UserServiceImpl implements UserService {
     // həmçinin Userin ümumi borcu hesablanır Userin Emailinə borc bildirişi göndərilir
 
     @Transactional
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 * * * * ?") // hər 1 dəqiqə işləsin
     public void sendScheduledDebtNotifications() {
         log.info("Scheduled task started: sending debt notifications.");
         List<User> users = userRepo.findAllUsersWithBorrowedBooks();
 
-        // Umumi olarag hem kitabin hemde userin borclarini yenileyir (Borc bildirisi yollamaq ucun)
         for (User user : users) {
-            for (BookCheckout bookCheckout : user.getBookCheckouts()) {
-                bookCheckout.calculateFine(); // Kitabin borcunu yenileyir
-            }
-            user.updateTotalDebt(); // Umumi borcu yenileyir
-            userRepo.save(user); // Yenilenmiw borcu DB-e yazir
+            boolean hasOverdueCollectedBooks = false;
 
-            if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) {
-                log.info("User with email {} has debt: {}", user.getEmail(), user.getTotalFineAmount());
-                notificationService.sendMailDebtMessage(user);
+            for (BookCheckout bookCheckout : user.getBookCheckouts()) {
+                // Əgər kitab götürülübsə və vaxtı keçibsə
+                if (bookCheckout.isCollected() && LocalDateTime.now().isAfter(bookCheckout.getReturnDate())) {
+                    bookCheckout.calculateFine(); // borc hesabla
+                    hasOverdueCollectedBooks = true;
+                }
+            }
+
+            if (hasOverdueCollectedBooks) {
+                user.updateTotalDebt(); // ümumi borcu yenilə
+                userRepo.save(user); // DB-ə yaz
+
+                if (user.getTotalFineAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    log.info("User with email {} has debt: {}", user.getEmail(), user.getTotalFineAmount());
+                    notificationService.sendMailDebtMessage(user);
+                }
             }
         }
+
         log.info("Scheduled debt notification task completed.");
     }
 }
